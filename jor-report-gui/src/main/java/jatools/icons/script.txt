@@ -1,0 +1,6 @@
+
+import com.jatools.core.HZUtil;
+public void select1(Object n,String path)
+{
+return HZUtil.selectNode(n,path);
+}

@@ -1,0 +1,330 @@
+/*
+ * Created on 2005-3-9
+ *
+ * TODO To change the template for this generated file go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+package com.jatools.designer.layer.click;
+
+import com.jatools.designer.ReportPanel;
+import com.jatools.designer.ZPoint;
+import com.jatools.designer.layer.painter.SelectionFramePainter;
+import com.jatools.designer.layer.table.TableEditKit;
+import com.jatools.designer.layer.utils.MoveWorker;
+import com.jatools.designer.peer.ComponentPeer;
+import com.jatools.designer.peer.ComponentPeerFactory;
+import com.jatools.designer.peer.TablePeer;
+import com.jatools.designer.undo.AddEdit;
+import com.jatools.designer.undo.DeleteEdit;
+import com.jatools.designer.undo.GroupEdit;
+import com.jatools.designer.undo.TablePropertyEdit;
+
+import com.jatools.swing.MessageBox;
+
+import jatools.component.Component;
+
+import jatools.component.table.Cell;
+import jatools.component.table.TableBase;
+
+import java.awt.Insets;
+import java.awt.Point;
+
+import javax.swing.SwingUtilities;
+import javax.swing.undo.CompoundEdit;
+
+
+/**
+ * @author java
+ *
+ * TODO To change the template for this generated type comment go to
+ * Window - Preferences - Java - Code Style - Code Templates
+ */
+public class BabyLooker {
+    //    int temp=0;
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param modifier
+     *            DOCUMENT ME!
+     * @param x
+     *            DOCUMENT ME!
+     * @param y
+     *            DOCUMENT ME!
+     * @param deltaX
+     *            DOCUMENT ME!
+     * @param deltaY
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    private static Point location = new Point();
+    ReportPanel owner;
+    ComponentPeer childPeer;
+    ZPoint xPoint;
+    ZPoint yPoint;
+    SelectionFramePainter paintLayer;
+    MoveWorker worker;
+    private boolean clickPlay;
+
+    /**
+     * Creates a new BabyLooker object.
+     *
+     * @param owner DOCUMENT ME!
+     * @param paintLayer DOCUMENT ME!
+     */
+    public BabyLooker(ReportPanel owner, SelectionFramePainter paintLayer) {
+        this.owner = owner;
+        this.paintLayer = paintLayer;
+    }
+
+    /**
+     * DOCUMENT ME!
+     */
+    public boolean grow(boolean clickPlay, Component comp, int x, int y) {
+        location.setLocation(x, y);
+
+        //   comp.invalid();
+        comp.validate();
+
+        int w = comp.getWidth();
+        int h = comp.getHeight();
+
+        comp.setWidth(0);
+        comp.setHeight(0);
+
+        ComponentPeer nearestContainer = findNearestContainter(comp, x, y);
+
+        if (nearestContainer != null) {
+            owner.screenPointAsChildPoint(nearestContainer, location);
+
+            // 得到的是基于容器左上角座标,而子件的座标位置原点在容器的客户区,应加上padding
+            Insets is = nearestContainer.getComponent().getPadding();
+            location.translate(-is.left, -is.top);
+            comp.setX(location.x);
+            comp.setY(location.y);
+
+            if (nearestContainer instanceof TablePeer) {
+                comp.setCell(new Cell(0, 0, 1, 1));
+            }
+
+            childPeer = createPeer(comp);
+            nearestContainer.add(childPeer);
+            owner.unselectAll();
+            owner.select(childPeer);
+            //    owner.repaint();
+            worker = new MoveWorker(owner, true, ComponentPeer.SOUTH_EAST, paintLayer,
+                    (ComponentPeer[]) owner.getSelection());
+
+            if (paintLayer != null) {
+                paintLayer.setSelectedFrames(worker.getFrames());
+            }
+
+            walk(x, y, w, h); // comp.getWidth() ,comp.getHeight() );
+
+            this.clickPlay = clickPlay;
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param x DOCUMENT ME!
+     * @param y DOCUMENT ME!
+     * @param xoff DOCUMENT ME!
+     * @param yoff DOCUMENT ME!
+     */
+    public void walk(int x, int y, int xoff, int yoff) {
+        location.setLocation(x, y);
+        worker.move(xoff, yoff);
+    }
+
+    /**
+     * DOCUMENT ME!
+     */
+    public void close() {
+        try {
+            MoveWorker.validParent(childPeer.getComponent());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            MessageBox.error(owner, e.getMessage());
+            childPeer.getParent().remove(childPeer);
+
+            //
+            // if (worker != null) {
+            worker.close(null);
+
+            //}
+            owner.unselect(childPeer);
+
+            return;
+        }
+
+        boolean asCell = addAsCell(childPeer);
+
+
+        if (!asCell) {
+            CompoundEdit edit = new GroupEdit();
+
+            AddEdit e = new AddEdit(childPeer, true);
+
+            edit.addEdit(e);
+   
+
+            if (worker != null) {
+                worker.close(edit);
+            }
+
+            owner.addEdit(edit);
+        }
+
+        //        if (childPeer.getTarget() instanceof ZShape) {
+        //            owner.getPinManager().attach(childPeer);
+        //        }
+ 
+        owner.prepareChildDone();
+
+        if (clickPlay) {
+       //     owner.getReport().alwaysValidate();
+        }
+
+        SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    location.setLocation(2, 2);
+                    owner.childPointAsScreenPoint(childPeer, location);
+
+                    owner.getGroupPanel().mousePressed(0, location.x, location.y);
+
+                    if (!clickPlay) {
+                        owner.getGroupPanel().mouseDoublePressed(0, location.x, location.y);
+                    }
+
+                    owner.repaint();
+                }
+            });
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param target DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    private ComponentPeer createPeer(Component target) {
+        ComponentPeer peer = ComponentPeerFactory.createPeer(owner, target);
+
+        for (int i = 0; i < target.getChildCount(); i++) {
+            Component child = target.getChild(i);
+
+            peer.add(createPeer(child));
+        }
+
+        return peer;
+    }
+
+    /**
+     * @param childPeer2
+     * @return
+     */
+    public static boolean addAsCell(ComponentPeer childPeer2) {
+        //        if (childPeer2.getTarget() instanceof ZShape) {
+        //            return false;
+        //        }
+
+        location.setLocation(0, 0);
+
+        // 取子部件原点相对于屏幕座标 s0
+        ReportPanel owner = childPeer2.getOwner();
+        owner.childPointAsScreenPoint(childPeer2, location);
+
+        // 取得子部件原点下的部件,是否为表格,
+        ComponentPeer hitPeer = owner.findComponentPeerAt(location.x, location.y);
+
+        //      如果该部件是cell部件,且,不是childPeer2的容器,
+        TablePeer peer = null;
+
+        if (hitPeer.getClass() == TablePeer.class) {
+            peer = (TablePeer) hitPeer;
+        } else if ((hitPeer.getParent().getClass() == TablePeer.class) &&
+                !hitPeer.isAcceptableChild(childPeer2.getComponent())) {
+            peer = (TablePeer) hitPeer.getParent();
+        } else {
+            return false;
+        }
+
+        // 取子部件原点的屏幕座标s0,相对于表格部件的位置x
+        owner.screenPointAsChildPoint(peer, location);
+
+        TableBase table = (TableBase) peer.getComponent();
+
+        Cell cell = (Cell) TableEditKit.hitCell(table, location.x, location.y).clone();
+        cell = TableEditKit.leadingCell(table, cell);
+
+        // 取子部件下面原点下面的tablePeer单元格位置
+        CompoundEdit edit = new GroupEdit();
+        edit.addEdit(new TablePropertyEdit(peer));
+
+        Component oldComp = table.getCellstore().getComponent(cell.row, cell.column);
+
+        if (oldComp != null) {
+            ComponentPeer oldPeer = peer.getChildPeer(oldComp);
+
+            int index = oldPeer.getParent().indexOf(oldPeer);
+
+            if (oldPeer.getParent().remove(oldPeer)) {
+                edit.addEdit(new DeleteEdit(oldPeer, index));
+            }
+        }
+
+        childPeer2.getParent().remove(childPeer2);
+
+        Component comp = childPeer2.getComponent();
+        comp.setCell(cell);
+        //        
+        //        if(comp instanceof ZTable)
+        //        {
+        //        	ZTable tab = (ZTable)comp;
+        //        	tab.setColumnsManager( (ZColumnsManager) peer.getTarget() );
+        //        	
+        //        }
+        peer.add(childPeer2);
+
+        AddEdit e1 = new AddEdit(childPeer2, true);
+
+        edit.addEdit(e1);
+
+        edit.addEdit(new TablePropertyEdit(peer));
+        owner.addEdit(edit);
+
+        //        owner.getReportPeer().validate();
+        return true;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param comp DOCUMENT ME!
+     * @param x DOCUMENT ME!
+     * @param y DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    private ComponentPeer findNearestContainter(Component comp, int x, int y) {
+        ComponentPeer hitPeer = owner.findComponentPeerAt(x, y);
+
+        while (hitPeer != null) {
+            if (hitPeer.isAcceptableChild(comp)) {
+                return hitPeer;
+            }
+
+            hitPeer = hitPeer.getParent();
+        }
+
+        return null;
+    }
+}

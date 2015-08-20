@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="NodeSource-i" id="jatools.dom.src" metadata="uml2-1.0" initialized="true" scrolledX="75" tag="1000" key="3230303631303036206A72323030382F6A61766139">
+  <children xsi:type="editmodel:ClassEditModel" name="RowNodeSource" location="730,449" size="314,151" id="jatools.dom.src/RowNodeSource" runTimeClassModel="getRegistrableProperties(),getTagName(),createNodeList(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;),create(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;)">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="291,72">
+      <children xsi:type="editmodel:MethodEditModel" name="create" id="jatools.dom.src/RowNodeSource#create(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="createNodeList" id="jatools.dom.src/RowNodeSource#createNodeList(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getRegistrableProperties" id="jatools.dom.src/RowNodeSource#getRegistrableProperties()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getTagName" id="jatools.dom.src/RowNodeSource#getTagName()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="jatools.dom.src/NodeSource&lt;-jatools.dom.src/RowNodeSource" source="//@children.0" target="//@children.4/@sourceConnections.0" targetEnd="//@children.0/@sourceConnections.0/@children.1" sourceEnd="//@children.0/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="157,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.4/@sourceConnections.0" name="NodeSource" location="160,70" size="314,271" id="jatools.dom.src/NodeSource" runTimeClassModel="getTagName(),getKeyExpression(),getChildren(),remove(I),isNodeListSource(),keyExpression,add(Ljatools.dom.src.NodeSource;),setChildren(Ljava.util.Vector;),children(),createNodeList(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;),create(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;),getParent(),setKeyExpression(Ljava.lang.String;),children,parent">
+    <children xsi:type="editmodel:CompartmentEditModel" size="124,54"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="291,216">
+      <children xsi:type="editmodel:MethodEditModel" name="add" id="jatools.dom.src/NodeSource#add(Ljatools.dom.src.NodeSource;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="children" id="jatools.dom.src/NodeSource#children()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="create" id="jatools.dom.src/NodeSource#create(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="createNodeList" id="jatools.dom.src/NodeSource#createNodeList(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getChildren" id="jatools.dom.src/NodeSource#getChildren()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getKeyExpression" id="jatools.dom.src/NodeSource#getKeyExpression()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getParent" id="jatools.dom.src/NodeSource#getParent()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getTagName" id="jatools.dom.src/NodeSource#getTagName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isNodeListSource" id="jatools.dom.src/NodeSource#isNodeListSource()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="remove" id="jatools.dom.src/NodeSource#remove(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setChildren" id="jatools.dom.src/NodeSource#setChildren(Ljava.util.Vector;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setKeyExpression" id="jatools.dom.src/NodeSource#setKeyExpression(Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="RootNodeSource" location="510,70" size="314,241" id="jatools.dom.src/RootNodeSource" runTimeClassModel="getRegistrableProperties(),getTagName(),isNodeListSource(),createNodeList(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;),setTagName(Ljava.lang.String;),create(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;),tag,RootNodeSource(),RootNodeSource(Ljava.lang.String;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="68,18"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="291,144">
+      <children xsi:type="editmodel:MethodEditModel" name="RootNodeSource" id="jatools.dom.src/RootNodeSource#RootNodeSource(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="RootNodeSource" id="jatools.dom.src/RootNodeSource#RootNodeSource()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="create" id="jatools.dom.src/RootNodeSource#create(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="createNodeList" id="jatools.dom.src/RootNodeSource#createNodeList(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getRegistrableProperties" id="jatools.dom.src/RootNodeSource#getRegistrableProperties()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getTagName" id="jatools.dom.src/RootNodeSource#getTagName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isNodeListSource" id="jatools.dom.src/RootNodeSource#isNodeListSource()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setTagName" id="jatools.dom.src/RootNodeSource#setTagName(Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="jatools.dom.src/NodeSource&lt;-jatools.dom.src/RootNodeSource" source="//@children.2" target="//@children.4/@sourceConnections.0" targetEnd="//@children.2/@sourceConnections.0/@children.1" sourceEnd="//@children.2/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="157,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="GroupNodeSource" location="400,449" size="314,241" id="jatools.dom.src/GroupNodeSource" runTimeClassModel="getRegistrableProperties(),getTagName(),group,createNodeList(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;),GroupNodeSource(Ljatools.dom.Group;),create(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;),getGroup(),setGroup(Ljatools.dom.Group;),GroupNodeSource()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="83,18"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="291,144">
+      <children xsi:type="editmodel:MethodEditModel" name="GroupNodeSource" id="jatools.dom.src/GroupNodeSource#GroupNodeSource()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="GroupNodeSource" id="jatools.dom.src/GroupNodeSource#GroupNodeSource(Ljatools.dom.Group;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="create" id="jatools.dom.src/GroupNodeSource#create(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="createNodeList" id="jatools.dom.src/GroupNodeSource#createNodeList(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getGroup" id="jatools.dom.src/GroupNodeSource#getGroup()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getRegistrableProperties" id="jatools.dom.src/GroupNodeSource#getRegistrableProperties()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getTagName" id="jatools.dom.src/GroupNodeSource#getTagName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setGroup" id="jatools.dom.src/GroupNodeSource#setGroup(Ljatools.dom.Group;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="jatools.dom.src/NodeSource&lt;-jatools.dom.src/GroupNodeSource" source="//@children.3" target="//@children.4/@sourceConnections.0" targetEnd="//@children.3/@sourceConnections.0/@children.1" sourceEnd="//@children.3/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="157,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showLiterals="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="DatasetNodeSource" location="50,449" size="337,367" id="jatools.dom.src/DatasetNodeSource" runTimeClassModel="getTagName(),getReader(),collectGroups(),getIndexFields(),setIndexFields([Ljava.lang.String;),indexFields,getRegistrableProperties(),DatasetNodeSource(Ljava.lang.String;Ljatools.data.reader.DatasetReader;),isNodeListSource(),createNodeList(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;),setTagName(Ljava.lang.String;),tag,DatasetNodeSource(),create(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;),reader,setReader(Ljatools.data.reader.DatasetReader;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="129,54"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="314,234">
+      <children xsi:type="editmodel:MethodEditModel" name="DatasetNodeSource" id="jatools.dom.src/DatasetNodeSource#DatasetNodeSource(Ljava.lang.String;Ljatools.data.reader.DatasetReader;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="DatasetNodeSource" id="jatools.dom.src/DatasetNodeSource#DatasetNodeSource()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="collectGroups" id="jatools.dom.src/DatasetNodeSource#collectGroups()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="create" id="jatools.dom.src/DatasetNodeSource#create(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="createNodeList" id="jatools.dom.src/DatasetNodeSource#createNodeList(Lorg.w3c.dom.Node;Lcom.jatools.core.Script;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getIndexFields" id="jatools.dom.src/DatasetNodeSource#getIndexFields()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getReader" id="jatools.dom.src/DatasetNodeSource#getReader()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getRegistrableProperties" id="jatools.dom.src/DatasetNodeSource#getRegistrableProperties()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getTagName" id="jatools.dom.src/DatasetNodeSource#getTagName()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isNodeListSource" id="jatools.dom.src/DatasetNodeSource#isNodeListSource()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setIndexFields" id="jatools.dom.src/DatasetNodeSource#setIndexFields([Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setReader" id="jatools.dom.src/DatasetNodeSource#setReader(Ljatools.data.reader.DatasetReader;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setTagName" id="jatools.dom.src/DatasetNodeSource#setTagName(Ljava.lang.String;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.3/@sourceConnections.0 //@children.2/@sourceConnections.0 //@children.0/@sourceConnections.0" autoLocated="true" id="jatools.dom.src/NodeSource&lt;-jatools.dom.src/DatasetNodeSource" source="//@children.4" target="//@children.1" targetEnd="//@children.4/@sourceConnections.0/@children.1" sourceEnd="//@children.4/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="168,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="157,270" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showAssociationMember="true" showMethods="true" showLiterals="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" properties="open=jatools.dom.src/NodeSource;wireOptions=1"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="10,10" gridOrigin="0,0" rulerUnit="pixel">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showMethodsParameterTypes="true" showMethodsReturnType="true" showMethodsParameterNames="true" showMethodsParameterKinds="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" innerClassSorter="Natural" showPrivateAttributes="true" showProtectedAttributes="true" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showProtectedMethods="true" showPublicMethods="true" showPackageMethods="true" showPrivateMethods="true" showStaticMethods="true" showProtectedInnerClasses="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showPrivateInnerClasses="true" showStaticInnerClasses="true" showInterfaceStereotype="true" showAssociationMember="true" showMethods="true" showLiterlas="true"/>
+</editmodel:ClassDiagramEditModel>

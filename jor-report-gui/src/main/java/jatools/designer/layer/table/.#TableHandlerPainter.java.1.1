@@ -1,0 +1,515 @@
+package com.jatools.designer.layer.table;
+
+import jatools.component.ColumnPanel;
+import jatools.component.Component;
+import jatools.component.Label;
+import jatools.component.painter.LabelPainter;
+import jatools.component.table.Cell;
+import jatools.component.table.GridComponent;
+import jatools.component.table.PowerTable;
+import jatools.component.table.RowPanel;
+import jatools.component.table.StaticTable;
+import jatools.component.table.Table;
+import jatools.component.table.TableBase;
+import jatools.core.view.Border;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.geom.Line2D;
+import java.awt.geom.Line2D.Float;
+import java.util.Iterator;
+import java.util.Vector;
+
+import com.jatools.designer.peer.TablePeer;
+
+
+/**
+ * DOCUMENT ME!
+ *
+ * @author $author$
+ * @version $Revision: 1.1 $
+ */
+public class TableHandlerPainter {
+    /**
+     * DOCUMENT ME!
+     */
+    public static TableHandlerPainter SHARED = new TableHandlerPainter();
+
+    /**
+     * DOCUMENT ME!
+     */
+    private static Color SECTION_COLOR = new Color(240, 240, 240);
+
+    //    private static Label cellLabel;
+    private static LabelPainter labelPainter;
+    private static final int staticRowHeaderWidth = 80;
+    private Vector handlers;
+    Component focused;
+    private TablePeer tablePeer;
+    private Rectangle area0;
+    private Rectangle area1;
+    private Table table0;
+    private Table table1;
+    boolean active = false;
+    Point start;
+
+    //2007 11-11
+    private Vector staticHeaderCells;
+
+    private void paintLeftHandler(Graphics2D g, Rectangle r, Component c, boolean first) {
+        /*
+         *    0     1
+         *    ------
+         *    |
+         *    |
+         *    ------
+         *    3     2
+         */
+        if (first) {
+            g.setColor(SECTION_COLOR);
+            g.fillRect(r.x - r.width - 1, r.y - 1, r.width + 1, r.height + 3);
+        }
+
+        int padding = first ? 0 : 2;
+        Float[] lines = new Float[3];
+        lines[0] = new Float(r.x - r.width, r.y + padding, r.x - r.width + 2, r.y + padding);
+        lines[1] = new Float(r.x - r.width, (r.y + r.height) - padding, r.x - r.width + 2,
+                (r.y + r.height) - padding);
+        lines[2] = new Float(r.x - r.width, r.y + padding, r.x - r.width, (r.y + r.height) -
+                padding);
+
+        Handler handler = new Handler(lines, c);
+        Color color = (focused == c) ? Color.RED : new Color(0, 153, 0);
+
+        g.setColor(color);
+        handler.paint(g);
+
+        handlers.add(handler);
+    }
+
+    Iterator iterator() {
+        if ((handlers != null) && !handlers.isEmpty()) {
+            return handlers.iterator();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 静态表头元素的Iterator 2007-12-11
+     * @return Iterator
+     */
+    Iterator staticHeaderCellIterator() {
+        if ((staticHeaderCells != null) && !staticHeaderCells.isEmpty()) {
+            return staticHeaderCells.iterator();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param t DOCUMENT ME!
+     * @param g2 DOCUMENT ME!
+     */
+    public void paint(TablePeer peer, Graphics2D g2) {
+        handlers = null;
+        active = false;
+        area0 = null;
+        area1 = null;
+        table0 = null;
+        table1 = null;
+
+        if (!peer.isFocused() || !peer.isHandlerVisible()) {
+            return;
+        }
+
+        handlers = new Vector();
+
+        //存放静态表表头元素 2007-12-12
+        setTextToTable();
+        staticHeaderCells = new Vector();
+
+        start = new Point();
+        peer.getOwner().childPointAsScreenPoint(peer, start);
+
+        Component tablebase = peer.getComponent();
+
+        if (tablebase instanceof PowerTable) {
+            PowerTable power = (PowerTable) tablebase;
+
+            paint(power.getLeftHeader(), g2);
+            paint(power.getTopHeader(), g2);
+        } else if (tablebase instanceof Table) {
+            paint((Table) tablebase, g2);
+        } else if (peer.getComponent() instanceof StaticTable) {
+            StaticTable t = (StaticTable) peer.getComponent();
+            Vector rowHeader = t.getRowHeaders();
+            Vector columnHeader = t.getColumnHeaders();
+            Point start = new Point();
+            peer.getOwner().childPointAsScreenPoint(peer, start);
+
+            int x = start.x;
+            int y = start.y - 21;
+            //静态列表头区域
+            area0 = new Rectangle();
+            area0.setLocation(x, y);
+
+            //在这里将label.name 存放变量
+            //label的text 存放显示值
+            for (int i = 0; i < t.getColumnCount(); i++) {
+                String text = t.getColumnkeyExpression(i);
+                Label label = (Label) columnHeader.get(i);
+
+                //               label.setName(Cell.toColumnId(i + 1));
+                if (t.getHeadShowMode() == StaticTable.SHOWTAG) {
+                    label.setText(Cell.toColumnId(i + 1));
+                    label.setName(text);
+                } else {
+                    if (text == null) {
+                        label.setText(Cell.toColumnId(i + 1));
+                    } else {
+                        label.setText(Cell.toColumnId(i + 1) + "=" + text);
+                    }
+
+                    label.setName(text);
+                }
+
+                label.setBounds(x + 1, y + 1, t.getColumnWidth(i) - 2, 20 - 2);
+                paintCell(g2, label);
+                x += t.getColumnWidth(i);
+            }
+
+            area0.setSize(x, 20);
+            //静态行表头区域
+            area1 = new Rectangle();
+            x = start.x - staticRowHeaderWidth;
+            y = start.y;
+            area1.setLocation(x, y);
+
+            //在这里将label.name 存放变量
+            //label的text 存放显示值
+            for (int i = 0; i < t.getRowCount(); i++) {
+                String text = t.getRowkeyExpression(i);
+                Label label = (Label) rowHeader.get(i);
+
+                if (t.getHeadShowMode() == StaticTable.SHOWTAG) {
+                    label.setText((i + 1) + "");
+                    label.setName(text);
+                } else {
+                    if (text == null) {
+                        label.setText((i + 1) + "");
+                    } else {
+                        label.setText((i + 1) + "=" + text);
+                    }
+
+                    label.setName(text);
+                }
+
+                label.setBounds(x + 1, y + 1, staticRowHeaderWidth - 1 - 2, t.getRowHeight(i) - 2);
+                paintCell(g2, label);
+                y += t.getRowHeight(i);
+            }
+
+            area1.setSize(staticRowHeaderWidth - 1, y);
+        }
+
+        this.tablePeer = peer;
+        this.active = true;
+
+        // this.drawingTable = drawing;
+    }
+
+    private void paint(Table drawing, Graphics2D g2) {
+        int level = getLevels(drawing, 1);
+        Cell cell = drawing.getCell();
+
+        // 取得根表在面板中的位置
+        g2.translate(start.x, start.y);
+
+        if (cell == null) {
+            cell = new Cell(0, 0, drawing.getColumnCount(), drawing.getRowCount());
+        }
+
+        if (drawing.isRightFlow()) {
+            paintTopHandler(g2, drawing, cell, level);
+            table1 = drawing;
+        } else {
+            table0 = drawing;
+            paintLeftHandler(g2, drawing, cell, level);
+        }
+
+        g2.translate(-start.x, -start.y);
+    }
+
+    /**
+     * 根据修改的值，付与到table中，保存下来2007-12-13
+     */
+    private void setTextToTable() {
+        if (staticHeaderCells != null) {
+            Iterator it = staticHeaderCells.iterator();
+            TableBase t = (TableBase) tablePeer.getComponent();
+
+            while (it.hasNext()) {
+                StaticTable.StaticHeadLabel label = (StaticTable.StaticHeadLabel) it.next();
+                String ss = label.getName();
+
+                if (label.IsRowHeader()) {
+                    if ((ss == null) || ss.trim().equals("")) {
+                        if ((t.getRowkeyExpressions() != null) &&
+                                t.getRowkeyExpressions().containsKey("E" + label.getIndex())) {
+                            t.getRowkeyExpressions().remove("E" + label.getIndex());
+                        }
+                    } else {
+                        t.setRowKeyExpression(label.getIndex(), ss);
+                    }
+                } else {
+                    if ((ss == null) || ss.trim().equals("")) {
+                        if ((t.getColumnkeyExpressions() != null) &&
+                                t.getColumnkeyExpressions().containsKey("E" + label.getIndex())) {
+                            t.getColumnkeyExpressions().remove("E" + label.getIndex());
+                        }
+                    } else {
+                        t.setColumnKeyExpression(label.getIndex(), ss);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * 绘制静态表头 2007-12-13
+     * @param g Graphics2D
+     * @param label Label
+     */
+    private void paintCell(Graphics2D g, Label label) {
+        label.setFont(new Font("Arial", 0, 10));
+        label.setHorizontalAlignment(Label.CENTER);
+        labelPainter = new LabelPainter();
+
+        if (label.equals(this.focused)) {
+            label.setBackColor(Color.red);
+        } else {
+            label.setBackColor(new Color(192, 200, 192));
+        }
+
+        label.setBorder(new Border(1, Color.LIGHT_GRAY));
+        labelPainter.paint(g, label);
+        g.draw3DRect(label.getBounds().x, label.getBounds().y, label.getBounds().width + 1,
+            label.getBounds().height + 1, true);
+        staticHeaderCells.add(label);
+    }
+
+    private void paintTopHandler(Graphics2D g2, Component c, Cell cell, int level) {
+        GridComponent gc = (GridComponent) c;
+        TableBase t = gc.getRootTable();
+
+        Rectangle r = new Rectangle();
+
+        r.y = -2;
+        r.height = 6 * (level - 1);
+
+        r.x = t.getColumnX(cell.column);
+        r.width = t.getColumnWidth(cell.column, cell.column2());
+
+        if (area1 == null) { // 最外层先画,最外层就是ListEditLayer范围
+            area1 = (Rectangle) r.clone();
+            area1.grow(1, 1);
+            area1.y -= r.height;
+            paintTopHandler(g2, r, c, true);
+        } else {
+            paintTopHandler(g2, r, c, false);
+        }
+
+        if (level > 1) {
+            for (int i = 0; i < c.getChildCount(); i++) {
+                Component child = c.getChild(i);
+
+                if (child instanceof ColumnPanel) {
+                    paintTopHandler(g2, child, child.getCell(), level - 1);
+                }
+            }
+        }
+    }
+
+    private void paintTopHandler(Graphics2D g, Rectangle r, Component c, boolean first) {
+        /*
+         *    0     1
+         *    ------
+         *    |
+         *    |
+         *    ------
+         *    3     2
+         */
+
+        // 画背景
+        g.setColor(SECTION_COLOR);
+        g.fillRect(r.x - 1, r.y - r.height - 1, r.width + 3, r.height + 1);
+
+        int padding = first ? 0 : 2;
+        Float[] lines = new Float[3];
+        lines[0] = new Float(r.x + padding, r.y - r.height, r.x + padding, r.y - r.height + 2);
+        lines[1] = new Float((r.x + r.width) - padding, r.y - r.height, (r.x + r.width) - padding,
+                r.y - r.height + 2);
+        lines[2] = new Float(r.x + padding, r.y - r.height, (r.x + r.width) - padding,
+                r.y - r.height);
+
+        Handler handler = new Handler(lines, c);
+        Color color = (focused == c) ? Color.RED : new Color(0, 153, 0);
+
+        g.setColor(color);
+        handler.paint(g);
+        handlers.add(handler);
+    }
+
+    private static int getLevels(Component c, int level) {
+        int maxLevel = ++level;
+
+        for (int i = 0; i < c.getChildCount(); i++) {
+            Component child = c.getChild(i);
+
+            if (child instanceof GridComponent) {
+                int l = getLevels(child, level);
+
+                if (l > maxLevel) {
+                    maxLevel = l;
+                }
+            }
+        }
+
+        if (maxLevel > level) {
+            level = maxLevel;
+        }
+
+        return (level);
+    }
+
+    private void paintLeftHandler(Graphics2D g2, Component c, Cell cell, int level) {
+        GridComponent gc = (GridComponent) c;
+        TableBase t = gc.getRootTable();
+
+        Rectangle r = new Rectangle();
+
+        r.x = -2;
+        r.width = 6 * (level - 1);
+
+        r.y = t.getRowY(cell.row);
+        r.height = t.getRowHeight(cell.row, cell.row2());
+
+        if (area0 == null) { // 最外层先画,最外层就是ListEditLayer范围
+            area0 = (Rectangle) r.clone();
+            area0.grow(1, 1);
+            area0.x -= r.width;
+            paintLeftHandler(g2, r, c, true);
+        } else {
+            paintLeftHandler(g2, r, c, false);
+        }
+
+        if (level > 1) {
+            for (int i = 0; i < c.getChildCount(); i++) {
+                Component child = c.getChild(i);
+
+                if (child instanceof RowPanel) {
+                    paintLeftHandler(g2, child, child.getCell(), level - 1);
+                }
+            }
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public TablePeer getTablePeer() {
+        return tablePeer;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public boolean isActive() {
+        return active;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param active DOCUMENT ME!
+     */
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param x DOCUMENT ME!
+     * @param y DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public Table hitTable(int x, int y) {
+        if ((area0 != null) && area0.contains(x, y)) {
+            return table0;
+        } else if ((area1 != null) && area1.contains(x, y)) {
+            return table1;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * 探测鼠标点击是否选中静态表的表头
+     * added 2007-12-12
+     * @param x int
+     * @param y int
+     * @return boolean
+     */
+    public boolean hitStaticHeader(int x, int y) {
+        if ((area0 != null) && area0.contains(x, y)) {
+            return true;
+        } else if ((area1 != null) && area1.contains(x, y)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+
+class Handler {
+    Line2D.Float[] lines;
+    Component c;
+
+    Handler(Float[] lines, Component c) {
+        this.lines = lines;
+        this.c = c;
+    }
+
+    boolean hit(int x, int y) {
+        for (int i = 0; i < lines.length; i++) {
+            Float line = lines[i];
+
+            if (line.ptSegDistSq(x, y) < 13) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    void paint(Graphics2D g) {
+        for (int i = 0; i < lines.length; i++) {
+            Float line = lines[i];
+
+            g.draw(line);
+        }
+    }
+}

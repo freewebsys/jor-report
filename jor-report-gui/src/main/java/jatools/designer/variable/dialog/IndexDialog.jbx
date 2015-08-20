@@ -1,0 +1,13 @@
+[PropertyInfo]
+c,java.awt.Component,false,false, , ,false,<default>
+exitedOK,boolean,false,false, , ,false,<default>
+indexSource,jatools.dom.src.DatasetNodeSource,false,false, , ,false,<default>
+leftList,javax.swing.JList,false,false, , ,false,<default>
+leftModel,javax.swing.DefaultListModel,false,false, , ,false,<default>
+rightList,javax.swing.JList,false,false, , ,false,<default>
+rightModel,javax.swing.DefaultListModel,false,false, , ,false,<default>
+[IconNames]
+
+
+
+

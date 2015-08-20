@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="ASCII"?>
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/2.0.0/UML" xmi:id="_vYcvoJZsEdyRIrYBxybDuw" name="src">
+  <packagedElement xmi:type="uml:Class" xmi:id="_VwuvkJZhEdyRIrYBxybDuw" name="NodeSource" clientDependency="_WU1iMJZhEdyRIrYBxybDuw _WVBvcZZhEdyRIrYBxybDuw _WVaJ8pZhEdyRIrYBxybDuw _WVgQkZZhEdyRIrYBxybDuw _WVmXMpZhEdyRIrYBxybDuw _c2q3gJZhEdyRIrYBxybDuw" isAbstract="true">
+    <generalization xmi:id="_WRAyIZZhEdyRIrYBxybDuw" general="_WRAyIJZhEdyRIrYBxybDuw"/>
+    <ownedAttribute xmi:id="_WSD7AJZhEdyRIrYBxybDuw" name="keyExpression" visibility="package" type="_WSD7A5ZhEdyRIrYBxybDuw">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_WTfeYZZhEdyRIrYBxybDuw" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_WTfeYJZhEdyRIrYBxybDuw"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_WSoiwJZhEdyRIrYBxybDuw" name="children" visibility="package" type="_WSoiwpZhEdyRIrYBxybDuw">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_WTrroZZhEdyRIrYBxybDuw" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_WTrroJZhEdyRIrYBxybDuw"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_WSoiw5ZhEdyRIrYBxybDuw" name="parent" visibility="package" type="_VwuvkJZhEdyRIrYBxybDuw">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_WTrro5ZhEdyRIrYBxybDuw" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_WTrropZhEdyRIrYBxybDuw"/>
+    </ownedAttribute>
+    <ownedOperation xmi:id="_WSoixJZhEdyRIrYBxybDuw" name="create" visibility="public" isAbstract="true" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2eqRZZhEdyRIrYBxybDuw" name="parent" type="_WSupYZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_c2eqRpZhEdyRIrYBxybDuw" name="script" type="_WS0wAZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_c2eqR5ZhEdyRIrYBxybDuw" type="_WSupYZZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_WS0wBJZhEdyRIrYBxybDuw" name="children" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2kw4pZhEdyRIrYBxybDuw" type="_VwuvkJZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_WTA9QpZhEdyRIrYBxybDuw" name="isNodeListSource" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2YjopZhEdyRIrYBxybDuw" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#boolean"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_WTA9RJZhEdyRIrYBxybDuw" name="add" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2eqSJZhEdyRIrYBxybDuw" name="src" type="_VwuvkJZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_c2kw4JZhEdyRIrYBxybDuw" type="_VwuvkJZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_WTA9R5ZhEdyRIrYBxybDuw" name="getChildren" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2YjpZZhEdyRIrYBxybDuw" type="_WSoiwpZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_WTA9SZZhEdyRIrYBxybDuw" name="remove" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2Yjo5ZhEdyRIrYBxybDuw" name="src">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#int"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_WTA9S5ZhEdyRIrYBxybDuw" name="getKeyExpression" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2YjpJZhEdyRIrYBxybDuw" type="_WSD7A5ZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_WTA9TZZhEdyRIrYBxybDuw" name="createNodeList" visibility="public" isAbstract="true" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2eqQZZhEdyRIrYBxybDuw" name="parent" type="_WSupYZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_c2eqQpZhEdyRIrYBxybDuw" name="script" type="_WS0wAZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_c2eqQ5ZhEdyRIrYBxybDuw" type="_WSupYZZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_WTHD5JZhEdyRIrYBxybDuw" name="setKeyExpression" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2YjoJZhEdyRIrYBxybDuw" name="keyExpression" type="_WSD7A5ZhEdyRIrYBxybDuw"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_WTHD5pZhEdyRIrYBxybDuw" name="getParent" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2eqQJZhEdyRIrYBxybDuw" type="_VwuvkJZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_WTHD6JZhEdyRIrYBxybDuw" name="setChildren" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2kw4ZZhEdyRIrYBxybDuw" name="children" type="_WSoiwpZhEdyRIrYBxybDuw"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_WTHD6pZhEdyRIrYBxybDuw" name="getTagName" visibility="public" isAbstract="true" concurrency="concurrent">
+      <ownedParameter xmi:id="_c2YjoZZhEdyRIrYBxybDuw" type="_WSD7A5ZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_WQ6rgJZhEdyRIrYBxybDuw" name="com.jatools.core.accessor">
+    <packagedElement xmi:type="uml:Interface" xmi:id="_WRAyIJZhEdyRIrYBxybDuw" name="PropertyAccessor" clientDependency="_cWSuVJZhEdyRIrYBxybDuw">
+      <generalization xmi:id="_cWMnsZZhEdyRIrYBxybDuw" general="_cWMnsJZhEdyRIrYBxybDuw"/>
+      <ownedOperation xmi:id="_cWSuUJZhEdyRIrYBxybDuw" name="getRegistrableProperties" visibility="public" isAbstract="true" concurrency="concurrent">
+        <ownedParameter xmi:id="_cWSuUpZhEdyRIrYBxybDuw" type="_cLTmVpZhEdyRIrYBxybDuw" direction="return"/>
+      </ownedOperation>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cLTmVpZhEdyRIrYBxybDuw" name="PropertyDescriptor"/>
+    <packagedElement xmi:type="uml:Interface" xmi:id="_cWMnsJZhEdyRIrYBxybDuw" name="AccessorBase"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_WRAyIJZhEdyRIrYBxybDuw" name="PropertyAccessor" clientDependency="_cWSuVJZhEdyRIrYBxybDuw">
+    <generalization xmi:id="_cWMnsZZhEdyRIrYBxybDuw" general="_cWMnsJZhEdyRIrYBxybDuw"/>
+    <ownedOperation xmi:id="_cWSuUJZhEdyRIrYBxybDuw" name="getRegistrableProperties" visibility="public" isAbstract="true" concurrency="concurrent">
+      <ownedParameter xmi:id="_cWSuUpZhEdyRIrYBxybDuw" type="_cLTmVpZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_WSupYJZhEdyRIrYBxybDuw" name="org.w3c.dom">
+    <packagedElement xmi:type="uml:Interface" xmi:id="_WSupYZZhEdyRIrYBxybDuw" name="Node" isAbstract="true"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_WSupYZZhEdyRIrYBxybDuw" name="Node" isAbstract="true"/>
+  <packagedElement xmi:type="uml:Package" xmi:id="_WS0wAJZhEdyRIrYBxybDuw" name="com.jatools.core">
+    <packagedElement xmi:type="uml:Interface" xmi:id="_WS0wAZZhEdyRIrYBxybDuw" name="Script"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_WS0wAZZhEdyRIrYBxybDuw" name="Script"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cJNUkJZhEdyRIrYBxybDuw" name="GroupNodeSource" clientDependency="_cLfzlJZhEdyRIrYBxybDuw _cLl6MJZhEdyRIrYBxybDuw _cLl6M5ZhEdyRIrYBxybDuw _cLl6NpZhEdyRIrYBxybDuw _cLsA0pZhEdyRIrYBxybDuw _cLyHcpZhEdyRIrYBxybDuw _cL4OEZZhEdyRIrYBxybDuw _cL4OFJZhEdyRIrYBxybDuw _cL-UspZhEdyRIrYBxybDuw _cL-UtZZhEdyRIrYBxybDuw _cMEbUpZhEdyRIrYBxybDuw _cMQokpZhEdyRIrYBxybDuw _cMQolZZhEdyRIrYBxybDuw _cMWvMpZhEdyRIrYBxybDuw _cMWvNZZhEdyRIrYBxybDuw _cMc10pZhEdyRIrYBxybDuw">
+    <generalization xmi:id="_cK1FMJZhEdyRIrYBxybDuw" general="_VwuvkJZhEdyRIrYBxybDuw"/>
+    <ownedAttribute xmi:id="_cLHZEJZhEdyRIrYBxybDuw" name="group" visibility="package" type="_cLHZEpZhEdyRIrYBxybDuw">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_cLTmXJZhEdyRIrYBxybDuw" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_cLTmW5ZhEdyRIrYBxybDuw"/>
+    </ownedAttribute>
+    <ownedOperation xmi:id="_cLHZE5ZhEdyRIrYBxybDuw" name="GroupNodeSource" visibility="public" concurrency="concurrent"/>
+    <ownedOperation xmi:id="_cLHZFJZhEdyRIrYBxybDuw" name="createNodeList" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cLHZFZZhEdyRIrYBxybDuw" name="parent" type="_WSupYZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cLNfsJZhEdyRIrYBxybDuw" name="script" type="_WS0wAZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cLNfspZhEdyRIrYBxybDuw" type="_WSupYZZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cLNftJZhEdyRIrYBxybDuw" name="getGroup" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cLNftZZhEdyRIrYBxybDuw" type="_cLHZEpZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cLNftpZhEdyRIrYBxybDuw" name="create" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cLNft5ZhEdyRIrYBxybDuw" name="parent" type="_WSupYZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cLNfuJZhEdyRIrYBxybDuw" name="script" type="_WS0wAZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cLNfuZZhEdyRIrYBxybDuw" type="_WSupYZZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cLTmUJZhEdyRIrYBxybDuw" name="setGroup" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cLTmUZZhEdyRIrYBxybDuw" name="group" type="_cLHZEpZhEdyRIrYBxybDuw"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cLTmUpZhEdyRIrYBxybDuw" name="getTagName" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cLTmU5ZhEdyRIrYBxybDuw" type="_WSD7A5ZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cLTmVJZhEdyRIrYBxybDuw" name="getRegistrableProperties" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cLTmV5ZhEdyRIrYBxybDuw" type="_cLTmVpZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cLTmWZZhEdyRIrYBxybDuw" name="GroupNodeSource" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cLTmWpZhEdyRIrYBxybDuw" name="group" type="_cLHZEpZhEdyRIrYBxybDuw"/>
+    </ownedOperation>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cJNUkZZhEdyRIrYBxybDuw" name="RootNodeSource" clientDependency="_cNNq0ZZhEdyRIrYBxybDuw _cNNq1JZhEdyRIrYBxybDuw _cNTxcpZhEdyRIrYBxybDuw _cNZ4EpZhEdyRIrYBxybDuw _cNf-spZhEdyRIrYBxybDuw _cNf-tZZhEdyRIrYBxybDuw _cNf-uJZhEdyRIrYBxybDuw _cNmFUpZhEdyRIrYBxybDuw _cNmFVZZhEdyRIrYBxybDuw">
+    <generalization xmi:id="_cMvJsJZhEdyRIrYBxybDuw" general="_VwuvkJZhEdyRIrYBxybDuw"/>
+    <ownedAttribute xmi:id="_cM7W8JZhEdyRIrYBxybDuw" name="tag" visibility="package" type="_WSD7A5ZhEdyRIrYBxybDuw">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_cNHkOJZhEdyRIrYBxybDuw" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_cNHkN5ZhEdyRIrYBxybDuw"/>
+    </ownedAttribute>
+    <ownedOperation xmi:id="_cM7W8ZZhEdyRIrYBxybDuw" name="create" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cM7W8pZhEdyRIrYBxybDuw" name="parent" type="_WSupYZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cNBdkJZhEdyRIrYBxybDuw" name="script" type="_WS0wAZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cNBdkZZhEdyRIrYBxybDuw" type="_WSupYZZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cNBdkpZhEdyRIrYBxybDuw" name="RootNodeSource" visibility="public" concurrency="concurrent"/>
+    <ownedOperation xmi:id="_cNBdk5ZhEdyRIrYBxybDuw" name="setTagName" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cNBdlJZhEdyRIrYBxybDuw" name="tag" type="_WSD7A5ZhEdyRIrYBxybDuw"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cNBdlZZhEdyRIrYBxybDuw" name="isNodeListSource" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cNBdlpZhEdyRIrYBxybDuw" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#boolean"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cNBdl5ZhEdyRIrYBxybDuw" name="getRegistrableProperties" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cNBdmZZhEdyRIrYBxybDuw" type="_cLTmVpZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cNBdm5ZhEdyRIrYBxybDuw" name="createNodeList" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cNBdnJZhEdyRIrYBxybDuw" name="parent" type="_WSupYZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cNBdnZZhEdyRIrYBxybDuw" name="script" type="_WS0wAZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cNHkMZZhEdyRIrYBxybDuw" type="_WSupYZZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cNHkM5ZhEdyRIrYBxybDuw" name="getTagName" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cNHkNJZhEdyRIrYBxybDuw" type="_WSD7A5ZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cNHkNZZhEdyRIrYBxybDuw" name="RootNodeSource" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cNHkNpZhEdyRIrYBxybDuw" name="tag" type="_WSD7A5ZhEdyRIrYBxybDuw"/>
+    </ownedOperation>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cJNUkpZhEdyRIrYBxybDuw" name="RowNodeSource" clientDependency="_cOQztJZhEdyRIrYBxybDuw _cOW6UpZhEdyRIrYBxybDuw _cOW6VZZhEdyRIrYBxybDuw _cOdA8pZhEdyRIrYBxybDuw _cOdA9ZZhEdyRIrYBxybDuw _cOdA-JZhEdyRIrYBxybDuw _cOjHkpZhEdyRIrYBxybDuw _cOjHlZZhEdyRIrYBxybDuw _cOp1QpZhEdyRIrYBxybDuw _cOp1RZZhEdyRIrYBxybDuw">
+    <generalization xmi:id="_cN4ZMJZhEdyRIrYBxybDuw" general="_VwuvkJZhEdyRIrYBxybDuw"/>
+    <ownedOperation xmi:id="_cOEmcJZhEdyRIrYBxybDuw" name="getTagName" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cOEmcZZhEdyRIrYBxybDuw" type="_WSD7A5ZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cOEmcpZhEdyRIrYBxybDuw" name="create" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cOEmc5ZhEdyRIrYBxybDuw" name="parent" type="_WSupYZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cOKtEJZhEdyRIrYBxybDuw" name="script" type="_WS0wAZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cOKtEZZhEdyRIrYBxybDuw" type="_WSupYZZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cOKtEpZhEdyRIrYBxybDuw" name="getRegistrableProperties" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cOKtFJZhEdyRIrYBxybDuw" type="_cLTmVpZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cOKtFpZhEdyRIrYBxybDuw" name="createNodeList" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cOKtF5ZhEdyRIrYBxybDuw" name="parent" type="_WSupYZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cOKtGJZhEdyRIrYBxybDuw" name="script" type="_WS0wAZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cOQzsZZhEdyRIrYBxybDuw" type="_WSupYZZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cJNUk5ZhEdyRIrYBxybDuw" name="DatasetNodeSource" clientDependency="_cPzEw5ZhEdyRIrYBxybDuw _cP5LYZZhEdyRIrYBxybDuw _cP5LZJZhEdyRIrYBxybDuw _cP_SApZhEdyRIrYBxybDuw _cP_SBZZhEdyRIrYBxybDuw _cP_SCJZhEdyRIrYBxybDuw _cQFYopZhEdyRIrYBxybDuw _cQXsgpZhEdyRIrYBxybDuw _cQXshZZhEdyRIrYBxybDuw _cQXsiJZhEdyRIrYBxybDuw _cQdzIpZhEdyRIrYBxybDuw _cQdzJZZhEdyRIrYBxybDuw _cQdzKJZhEdyRIrYBxybDuw _cQj5wpZhEdyRIrYBxybDuw _cQj5xZZhEdyRIrYBxybDuw _cQj5yJZhEdyRIrYBxybDuw _cQqAYpZhEdyRIrYBxybDuw _cQqAZZZhEdyRIrYBxybDuw">
+    <generalization xmi:id="_cO2CgJZhEdyRIrYBxybDuw" general="_VwuvkJZhEdyRIrYBxybDuw"/>
+    <ownedAttribute xmi:id="_cPUjoJZhEdyRIrYBxybDuw" name="tag" visibility="package" type="_WSD7A5ZhEdyRIrYBxybDuw">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_cPs-IpZhEdyRIrYBxybDuw" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_cPs-IZZhEdyRIrYBxybDuw"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_cPUjoZZhEdyRIrYBxybDuw" name="reader" visibility="package" type="_cPUjo5ZhEdyRIrYBxybDuw">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_cPs-JJZhEdyRIrYBxybDuw" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_cPs-I5ZhEdyRIrYBxybDuw"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_cPUjpJZhEdyRIrYBxybDuw" name="indexFields" visibility="package" type="_WSD7A5ZhEdyRIrYBxybDuw">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_cPaqQZZhEdyRIrYBxybDuw" value="*"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_cPs-JZZhEdyRIrYBxybDuw"/>
+    </ownedAttribute>
+    <ownedOperation xmi:id="_cPaqQpZhEdyRIrYBxybDuw" name="getRegistrableProperties" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPaqRJZhEdyRIrYBxybDuw" type="_cLTmVpZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cPaqRpZhEdyRIrYBxybDuw" name="createNodeList" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPaqR5ZhEdyRIrYBxybDuw" name="parent" type="_WSupYZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cPaqSJZhEdyRIrYBxybDuw" name="script" type="_WS0wAZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cPgw4ZZhEdyRIrYBxybDuw" type="_WSupYZZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cPgw45ZhEdyRIrYBxybDuw" name="DatasetNodeSource" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPgw5JZhEdyRIrYBxybDuw" name="tag" type="_WSD7A5ZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cPgw5ZZhEdyRIrYBxybDuw" name="reader" type="_cPUjo5ZhEdyRIrYBxybDuw"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cPgw5pZhEdyRIrYBxybDuw" name="DatasetNodeSource" visibility="public" concurrency="concurrent"/>
+    <ownedOperation xmi:id="_cPgw55ZhEdyRIrYBxybDuw" name="setTagName" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPgw6JZhEdyRIrYBxybDuw" name="tag" type="_WSD7A5ZhEdyRIrYBxybDuw"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cPgw6ZZhEdyRIrYBxybDuw" name="getIndexFields" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPgw65ZhEdyRIrYBxybDuw" type="_WSD7A5ZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cPgw7ZZhEdyRIrYBxybDuw" name="setIndexFields" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPgw7pZhEdyRIrYBxybDuw" name="indexFields" type="_WSD7A5ZhEdyRIrYBxybDuw"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cPm3gJZhEdyRIrYBxybDuw" name="create" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPm3gZZhEdyRIrYBxybDuw" name="parent" type="_WSupYZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cPm3gpZhEdyRIrYBxybDuw" name="script" type="_WS0wAZZhEdyRIrYBxybDuw"/>
+      <ownedParameter xmi:id="_cPm3g5ZhEdyRIrYBxybDuw" type="_WSupYZZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cPm3hJZhEdyRIrYBxybDuw" name="setReader" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPm3hZZhEdyRIrYBxybDuw" name="reader" type="_cPUjo5ZhEdyRIrYBxybDuw"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cPm3hpZhEdyRIrYBxybDuw" name="getReader" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPm3h5ZhEdyRIrYBxybDuw" type="_cPUjo5ZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cPm3iJZhEdyRIrYBxybDuw" name="collectGroups" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPm3ipZhEdyRIrYBxybDuw" type="_cLHZEpZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cPm3jJZhEdyRIrYBxybDuw" name="getTagName" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPm3jZZhEdyRIrYBxybDuw" type="_WSD7A5ZhEdyRIrYBxybDuw" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_cPm3jpZhEdyRIrYBxybDuw" name="isNodeListSource" visibility="public" concurrency="concurrent">
+      <ownedParameter xmi:id="_cPs-IJZhEdyRIrYBxybDuw" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/JavaPrimitiveTypes.library.uml#boolean"/>
+      </ownedParameter>
+    </ownedOperation>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_cLHZEZZhEdyRIrYBxybDuw" name="jatools.dom">
+    <packagedElement xmi:type="uml:Class" xmi:id="_cLHZEpZhEdyRIrYBxybDuw" name="Group"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cLfzkZZhEdyRIrYBxybDuw" name="GroupNode"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cLfzk5ZhEdyRIrYBxybDuw" name="DatasetBasedNode" isAbstract="true"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cNNq0JZhEdyRIrYBxybDuw" name="DatasetDocument"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cOQzs5ZhEdyRIrYBxybDuw" name="RowNode"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cPzEwpZhEdyRIrYBxybDuw" name="DatasetNode"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cLHZEpZhEdyRIrYBxybDuw" name="Group"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cLTmVpZhEdyRIrYBxybDuw" name="PropertyDescriptor"/>
+  <packagedElement xmi:type="uml:Package" xmi:id="_cLZs8JZhEdyRIrYBxybDuw" name="jatools.dataset">
+    <packagedElement xmi:type="uml:Class" xmi:id="_cLZs8ZZhEdyRIrYBxybDuw" name="Key"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cLfzkpZhEdyRIrYBxybDuw" name="GroupedDataset"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cPzEwJZhEdyRIrYBxybDuw" name="DatasetException"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cPzEwZZhEdyRIrYBxybDuw" name="Dataset"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cLZs8ZZhEdyRIrYBxybDuw" name="Key"/>
+  <packagedElement xmi:type="uml:Package" xmi:id="_cLZs9JZhEdyRIrYBxybDuw" name="jatools.component">
+    <packagedElement xmi:type="uml:Class" xmi:id="_cLZs9ZZhEdyRIrYBxybDuw" name="ComponentConstants"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cLZs9ZZhEdyRIrYBxybDuw" name="ComponentConstants"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cLfzkZZhEdyRIrYBxybDuw" name="GroupNode"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cLfzkpZhEdyRIrYBxybDuw" name="GroupedDataset"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cLfzk5ZhEdyRIrYBxybDuw" name="DatasetBasedNode" isAbstract="true"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cNNq0JZhEdyRIrYBxybDuw" name="DatasetDocument"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cOQzs5ZhEdyRIrYBxybDuw" name="RowNode"/>
+  <packagedElement xmi:type="uml:Package" xmi:id="_cPUjopZhEdyRIrYBxybDuw" name="jatools.data.reader">
+    <packagedElement xmi:type="uml:Interface" xmi:id="_cPUjo5ZhEdyRIrYBxybDuw" name="DatasetReader"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_cPUjo5ZhEdyRIrYBxybDuw" name="DatasetReader"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cPzEwJZhEdyRIrYBxybDuw" name="DatasetException"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cPzEwZZhEdyRIrYBxybDuw" name="Dataset"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_cPzEwpZhEdyRIrYBxybDuw" name="DatasetNode"/>
+  <packagedElement xmi:type="uml:Interface" xmi:id="_cWMnsJZhEdyRIrYBxybDuw" name="AccessorBase"/>
+  <packagedElement xmi:type="uml:Package" xmi:id="_WSD7AZZhEdyRIrYBxybDuw" name="java.lang">
+    <packagedElement xmi:type="uml:Class" xmi:id="_WSD7A5ZhEdyRIrYBxybDuw" name="String" isLeaf="true"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cLZs8pZhEdyRIrYBxybDuw" name="Class" isLeaf="true"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cLZs85ZhEdyRIrYBxybDuw" name="System" isLeaf="true"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Package" xmi:id="_WSoiwZZhEdyRIrYBxybDuw" name="java.util">
+    <packagedElement xmi:type="uml:Class" xmi:id="_WSoiwpZhEdyRIrYBxybDuw" name="Vector"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_cLfzkJZhEdyRIrYBxybDuw" name="ArrayList"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_WU1iMJZhEdyRIrYBxybDuw" supplier="_WSD7A5ZhEdyRIrYBxybDuw" client="_VwuvkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_WVBvcZZhEdyRIrYBxybDuw" supplier="_WS0wAZZhEdyRIrYBxybDuw" client="_VwuvkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_WVaJ8pZhEdyRIrYBxybDuw" supplier="_WSoiwpZhEdyRIrYBxybDuw" client="_VwuvkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_WVgQkZZhEdyRIrYBxybDuw" supplier="_WSoiwpZhEdyRIrYBxybDuw" client="_VwuvkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_WVmXMpZhEdyRIrYBxybDuw" supplier="_WSupYZZhEdyRIrYBxybDuw" client="_VwuvkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cLfzlJZhEdyRIrYBxybDuw" supplier="_cLTmVpZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cLl6MJZhEdyRIrYBxybDuw" supplier="_cLTmVpZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cLl6M5ZhEdyRIrYBxybDuw" supplier="_cLfzkpZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cLl6NpZhEdyRIrYBxybDuw" supplier="_cLfzkZZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cLsA0pZhEdyRIrYBxybDuw" supplier="_cLfzk5ZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cLyHcpZhEdyRIrYBxybDuw" supplier="_cLfzkJZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cL4OEZZhEdyRIrYBxybDuw" supplier="_cLfzkJZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cL4OFJZhEdyRIrYBxybDuw" supplier="_cLZs8pZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cL-UspZhEdyRIrYBxybDuw" supplier="_cLZs8pZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cL-UtZZhEdyRIrYBxybDuw" supplier="_WS0wAZZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cMEbUpZhEdyRIrYBxybDuw" supplier="_cLZs85ZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cMQokpZhEdyRIrYBxybDuw" supplier="_cLZs8ZZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cMQolZZhEdyRIrYBxybDuw" supplier="_cLZs9ZZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cMWvMpZhEdyRIrYBxybDuw" supplier="_cLHZEpZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cMWvNZZhEdyRIrYBxybDuw" supplier="_WSupYZZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cMc10pZhEdyRIrYBxybDuw" supplier="_WSD7A5ZhEdyRIrYBxybDuw" client="_cJNUkJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cNNq0ZZhEdyRIrYBxybDuw" supplier="_cLZs9ZZhEdyRIrYBxybDuw" client="_cJNUkZZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cNNq1JZhEdyRIrYBxybDuw" supplier="_WSD7A5ZhEdyRIrYBxybDuw" client="_cJNUkZZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cNTxcpZhEdyRIrYBxybDuw" supplier="_WS0wAZZhEdyRIrYBxybDuw" client="_cJNUkZZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cNZ4EpZhEdyRIrYBxybDuw" supplier="_cNNq0JZhEdyRIrYBxybDuw" client="_cJNUkZZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cNf-spZhEdyRIrYBxybDuw" supplier="_cLZs8pZhEdyRIrYBxybDuw" client="_cJNUkZZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cNf-tZZhEdyRIrYBxybDuw" supplier="_cLZs8pZhEdyRIrYBxybDuw" client="_cJNUkZZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cNf-uJZhEdyRIrYBxybDuw" supplier="_WSupYZZhEdyRIrYBxybDuw" client="_cJNUkZZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cNmFUpZhEdyRIrYBxybDuw" supplier="_cLTmVpZhEdyRIrYBxybDuw" client="_cJNUkZZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cNmFVZZhEdyRIrYBxybDuw" supplier="_cLTmVpZhEdyRIrYBxybDuw" client="_cJNUkZZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cOQztJZhEdyRIrYBxybDuw" supplier="_cLZs9ZZhEdyRIrYBxybDuw" client="_cJNUkpZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cOW6UpZhEdyRIrYBxybDuw" supplier="_WSD7A5ZhEdyRIrYBxybDuw" client="_cJNUkpZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cOW6VZZhEdyRIrYBxybDuw" supplier="_WS0wAZZhEdyRIrYBxybDuw" client="_cJNUkpZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cOdA8pZhEdyRIrYBxybDuw" supplier="_cLfzk5ZhEdyRIrYBxybDuw" client="_cJNUkpZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cOdA9ZZhEdyRIrYBxybDuw" supplier="_cLZs8pZhEdyRIrYBxybDuw" client="_cJNUkpZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cOdA-JZhEdyRIrYBxybDuw" supplier="_cLZs8pZhEdyRIrYBxybDuw" client="_cJNUkpZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cOjHkpZhEdyRIrYBxybDuw" supplier="_cOQzs5ZhEdyRIrYBxybDuw" client="_cJNUkpZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cOjHlZZhEdyRIrYBxybDuw" supplier="_WSupYZZhEdyRIrYBxybDuw" client="_cJNUkpZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cOp1QpZhEdyRIrYBxybDuw" supplier="_cLTmVpZhEdyRIrYBxybDuw" client="_cJNUkpZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cOp1RZZhEdyRIrYBxybDuw" supplier="_cLTmVpZhEdyRIrYBxybDuw" client="_cJNUkpZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cPzEw5ZhEdyRIrYBxybDuw" supplier="_WSoiwpZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cP5LYZZhEdyRIrYBxybDuw" supplier="_WSoiwpZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cP5LZJZhEdyRIrYBxybDuw" supplier="_cLTmVpZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cP_SApZhEdyRIrYBxybDuw" supplier="_cLTmVpZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cP_SBZZhEdyRIrYBxybDuw" supplier="_cPzEwZZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cP_SCJZhEdyRIrYBxybDuw" supplier="_cPzEwJZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQFYopZhEdyRIrYBxybDuw" supplier="_cPUjo5ZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQXsgpZhEdyRIrYBxybDuw" supplier="_cPzEwpZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQXshZZhEdyRIrYBxybDuw" supplier="_cLZs8pZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQXsiJZhEdyRIrYBxybDuw" supplier="_cLZs8pZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQdzIpZhEdyRIrYBxybDuw" supplier="_WS0wAZZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQdzJZZhEdyRIrYBxybDuw" supplier="_cLZs9ZZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQdzKJZhEdyRIrYBxybDuw" supplier="_cLHZEpZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQj5wpZhEdyRIrYBxybDuw" supplier="_WSupYZZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQj5xZZhEdyRIrYBxybDuw" supplier="_VwuvkJZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQj5yJZhEdyRIrYBxybDuw" supplier="_WSD7A5ZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQqAYpZhEdyRIrYBxybDuw" supplier="_cJNUkJZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cQqAZZZhEdyRIrYBxybDuw" supplier="_cJNUkJZhEdyRIrYBxybDuw" client="_cJNUk5ZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_cWSuVJZhEdyRIrYBxybDuw" supplier="_cLTmVpZhEdyRIrYBxybDuw" client="_WRAyIJZhEdyRIrYBxybDuw _WRAyIJZhEdyRIrYBxybDuw"/>
+  <packagedElement xmi:type="uml:Usage" xmi:id="_c2q3gJZhEdyRIrYBxybDuw" supplier="_WSoiwpZhEdyRIrYBxybDuw" client="_VwuvkJZhEdyRIrYBxybDuw"/>
+</uml:Model>

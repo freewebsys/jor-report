@@ -1,0 +1,745 @@
+package com.jatools.designer.data;
+
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Vector;
+
+import jatools.data.reader.DatasetReader;
+import jatools.dataset.Dataset;
+import jatools.util.Map;
+import jatools.util.Util;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+
+//import com.jatools.core.ZMap;
+//import com.jatools.core.ZUtil;
+//import com.jatools.data.paraform.Option;
+
+
+import com.jatools.designer.App;
+import com.jatools.swing.jComboBox;
+
+
+
+public class WebComponentPanel extends JPanel implements Settable{
+	 static final String[] columns = new String[] {
+         "",
+         "标签",
+         "值"
+};
+	    Frame owner=null;
+	    ZMap settings = null;
+	    JPanel cards;
+	    JRadioButton staticsrc = new JRadioButton("静态");
+	    JRadioButton dynamicsrc = new JRadioButton("动态");
+	    JTextField promptText = new JTextField();
+	    jComboBox typesCombo = new jComboBox(new String[] {
+	                                         "text",
+	                                         "combobox",
+	                                         "list",
+	                                         "radio",
+	                                         "checkbox",
+	                                         "treecombobox",
+	                                         "datepicker"
+	    }, new String[] {
+	            "文本框",
+	            "下拉框",
+	            "列表框",
+	            "无线按钮",
+	            "复选框",
+	            "树形下拉框",
+	            "日期选择下拉框"
+	    });
+	    private SrcPanel srcpanel;
+	public WebComponentPanel() {
+		// TODO Auto-generated constructor stub
+		 super(new GridBagLayout());
+//		first
+	        GridBagConstraints gbc = new GridBagConstraints();
+	        gbc.fill = GridBagConstraints.BOTH;
+	        gbc.insets = new Insets(5, 5, 5, 5);
+	        add(new JLabel("提示:"), gbc); //$NON-NLS-1$
+
+	        gbc.gridwidth = GridBagConstraints.REMAINDER;
+	        gbc.weightx = 1.0f;
+	        add(promptText, gbc);
+
+	        gbc.gridwidth = 1;
+	        gbc.weightx = 0;
+
+	        add(new JLabel("表单域类型:"), gbc); //$NON-NLS-1$
+
+	        gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+	        add(typesCombo, gbc);
+	        gbc.weighty = 1;
+
+	        cards = new JPanel(new CardLayout());
+	        srcpanel = new SrcPanel();
+	        cards.add(new JPanel(), "blank");
+	        cards.add(srcpanel, "srcpanel");
+	        cards.add(new TreeComboPanel(), "treecombo");
+
+	        add(cards, gbc);
+
+	        this.typesCombo.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent e) {
+	                String type = (String) typesCombo.getKey();
+
+	                if (type != null) {
+	                    if (",text,radio,checkbox,datepicker,".indexOf(type) > -1) {
+	                        CardLayout cl = (CardLayout) (cards.getLayout());
+	                        cl.show(cards, "blank");
+	                    } else if (",combobox,list,".indexOf(type) > -1) {
+	                        CardLayout cl = (CardLayout) (cards.getLayout());
+	                        cl.show(cards, "srcpanel");
+	                    } else if (type.equals("treecombobox")) {
+	                        CardLayout cl = (CardLayout) (cards.getLayout());
+	                        cl.show(cards, "treecombo");
+	                    }
+	                }
+	            }
+	        });
+	}
+	 
+	  
+	 public void setOwner(Frame owner) {
+         this.owner = owner;
+ }
+	 
+	 public ZMap getSettings() {
+	        return null;
+	    }
+
+ /**
+  * DOCUMENT ME!
+  *
+  * @return DOCUMENT ME!
+  */
+
+ public static Object[][] asArrays(Vector options) {
+	  Object[][] data = null;
+
+      if (options != null) {
+          data = new Object[options.size()][];
+
+          for (int i = 0; i < options.size(); i++) {
+              Option op = (Option) options.get(i);
+              Object[] vals = new Object[3];
+              vals[0] = new Boolean(op.isSelected());
+              vals[1] = op.getLabel();
+              vals[2] = op.getValue();
+              data[i] = vals;
+          }
+      } else {
+          data = new Object[0][0];
+      }
+
+      return data;
+ }
+ public void setView(ZMap settings) {
+	 if (settings != null) {
+         String prompt = (String) settings.get(WebComponent.PROMPT);
+         this.promptText.setText(prompt);
+
+         String type = (String) settings.get(WebComponent.TYPE);
+         this.typesCombo.setKey(type);
+
+         Component c = getTopCard(cards);
+
+         if (c instanceof Settable) {
+             Settable settable = (Settable) c;
+             settable.setView(settings);
+         }
+     }
+ }
+ public void setModel(ZMap settings) {
+		// TODO Auto-generated method stub
+		 settings.put(WebComponent.PROMPT, this.promptText.getText());
+	        settings.put(WebComponent.TYPE, this.typesCombo.getKey());
+
+	        Component c = getTopCard(cards);
+
+	        if (c instanceof Settable) {
+	            Settable settable = (Settable) c;
+	            settable.setModel(settings);
+	        }
+	}
+
+ protected Component getTopCard(Container container) {
+     Component[] array = container.getComponents();
+
+     for (int i = 0; i < array.length; i++) {
+         if ((array[i]).isVisible()) {
+             return (array[i]);
+         }
+     }
+  
+     return null;
+ }
+
+ class OptionsTableModel extends DefaultTableModel {
+     OptionsTableModel(Vector options) {
+         super(asArrays(options), columns);
+     }
+
+     public Vector getOptions() {
+         if (this.getRowCount() == 0) {
+             return null;
+         } else {
+             Vector options = new Vector();
+
+             for (int i = 0; i < this.getRowCount(); i++) {
+                 Boolean b = (Boolean)this.getValueAt(i, 0);
+
+                 Option op = new Option((b != null) && b.booleanValue(),
+                                        (String) getValueAt(i, 1),
+                                        (String) getValueAt(i, 2));
+                 options.add(op);
+             }
+
+             return options;
+         }
+     }
+
+     public Class getColumnClass(int col) {
+         return (col == 0) ? Boolean.class : String.class;
+     }
+ }
+ 
+ class SrcPanel extends JPanel implements ActionListener, Settable {
+	 JPanel cards = new JPanel(new CardLayout());
+     JRadioButton staticsrc = new JRadioButton("静态");
+     JRadioButton dynamicsrc = new JRadioButton("动态");
+
+     SrcPanel() {
+         super(new BorderLayout());
+
+         JPanel p = new JPanel(new GridLayout(1, 3));
+         p.add(this.staticsrc);
+         p.add(this.dynamicsrc);
+
+         ButtonGroup bg = new ButtonGroup();
+         bg.add(this.staticsrc);
+         bg.add(this.dynamicsrc);
+
+         p.setBorder(BorderFactory.createTitledBorder("列表数据来源:"));
+         this.add(p, BorderLayout.NORTH);
+
+         this.add(cards, BorderLayout.CENTER);
+         this.cards.add(new OptionsPanel(), "static");
+         this.cards.add(new DynamicListPanel(), "dynamic");
+
+         this.staticsrc.addActionListener(this);
+         this.dynamicsrc.addActionListener(this);
+     }
+
+     public void actionPerformed(ActionEvent e) {
+         CardLayout cl = (CardLayout) (cards.getLayout());
+         cl.show(cards, this.staticsrc.isSelected() ? "static" : "dynamic");
+     }
+
+     public void setView(ZMap map) {
+         if (map.get(WebComponent.READER) == null) {
+             this.staticsrc.doClick();
+         } else {
+             this.dynamicsrc.doClick();
+         }
+
+         Settable set = (Settable) getTopCard(cards);
+         set.setView(map);
+     }
+
+     public void setModel(ZMap map) {
+         Settable set = (Settable) getTopCard(cards);
+         set.setModel(map);
+     }
+ }
+ class TreeComboPanel extends JPanel implements Settable {
+     //ZRowsReader reader;
+     DatasetReader reader;
+     JComboBox keyCombo = new JComboBox();
+     JComboBox nameCombo = new JComboBox();
+     JComboBox parentKeyCombo = new JComboBox();
+     JTextField nameText = new JTextField();
+     JTextField rootvalueText = new JTextField();
+
+
+     TreeComboPanel() {
+         super(new GridBagLayout());
+
+         //first
+         GridBagConstraints gbc = new GridBagConstraints();
+         gbc.fill = GridBagConstraints.BOTH;
+         gbc.insets = new Insets(5, 0, 5, 0);
+         add(new JLabel("数据源:"), gbc); //$NON-NLS-1$
+
+         //   gbc.gridwidth = GridBagConstraints.REMAINDER;
+         gbc.weightx = 10;
+         add(nameText, gbc);
+         gbc.weightx = 0;
+
+         JButton edit = new JButton("..."); //$NON-NLS-1$
+//jdh 2007 11 7
+//         edit.addActionListener(new ActionListener() {
+//             public void actionPerformed(ActionEvent e) {
+//                 ZRowsReader reader = createReader();
+//
+//                 if (reader != null) {
+//                     TreeComboPanel.this.setReader(reader);
+//                 }
+//             }
+//         });
+         edit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+//                ZReaderChooser readerChooser = new ZReaderChooser(owner,
+//                        App.getConfiguration());
+                ReaderChooser readerChooser = new ReaderChooser(owner,
+                        App.getConfiguration());
+                readerChooser.setModal(true);
+                readerChooser.show();
+                //ZRowsReader reader = readerChooser.getReader();
+                DatasetReader reader = readerChooser.getReader();
+                if ((reader != null) ) {
+//                    if(!reader.isValid()){
+//                        JOptionPane.showConfirmDialog(readerChooser,"数据源不合法！","提示对话框"
+//                                ,JOptionPane.CLOSED_OPTION,JOptionPane.ERROR_MESSAGE);
+//                        return;
+//                    }
+                    TreeComboPanel.this.setReader(reader);
+                }
+            }
+        });
+
+
+         edit.setFont(new Font("Arial", 0, 8)); //$NON-NLS-1$
+         edit.setPreferredSize(new Dimension(22, 22));
+
+         gbc.fill = GridBagConstraints.NONE;
+
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         gbc.insets = new Insets(0, 1, 0, 5);
+         add(edit, gbc);
+         gbc.insets = new Insets(5, 0, 5, 0);
+         gbc.gridwidth = 1;
+         gbc.fill = GridBagConstraints.BOTH;
+         add(new JLabel("键值字段:"), gbc); //$NON-NLS-1$
+
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+         add(keyCombo, gbc);
+
+         gbc.gridwidth = 1;
+         //            gbc.weightx = 0;
+         add(new JLabel("显示字段:"), gbc); //$NON-NLS-1$
+
+         //            gbc.insets = new Insets(5, 0, 5, 0);
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         add(nameCombo, gbc);
+
+         gbc.gridwidth = 1;
+         gbc.fill = GridBagConstraints.BOTH;
+         add(new JLabel("父键值字段:"), gbc); //$NON-NLS-1$
+
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+         add(parentKeyCombo, gbc);
+
+         gbc.gridwidth = 1;
+         gbc.fill = GridBagConstraints.BOTH;
+         add(new JLabel("根键值:"), gbc); //$NON-NLS-1$
+
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+         add(rootvalueText, gbc);
+
+
+         gbc.weighty = 100;
+         add(Box.createVerticalGlue(), gbc);
+     }
+
+     public void setView(ZMap map) {
+        // ZRowsReader reader = (ZRowsReader) map.get(WebComponent.READER);
+    	 DatasetReader reader = (DatasetReader) map.get(WebComponent.READER);
+         setReader(reader);
+
+         this.keyCombo.setSelectedItem(map.get(WebComponent.KEY_FIELD));
+         this.nameCombo.setSelectedItem(map.get(WebComponent.LABEL_FIELD));
+         this.parentKeyCombo.setSelectedItem(map.get(WebComponent.
+                 PARENT_KEY_FIELD));
+         this.rootvalueText.setText((String) map.get(WebComponent.
+                 ROOT_KEY_VALUE));
+
+     }
+
+     private void setReader(DatasetReader reader2/**ZRowsReader reader2*/) {
+         this.keyCombo.removeAllItems();
+         this.nameCombo.removeAllItems();
+         this.nameText.setText(null);
+         this.parentKeyCombo.removeAllItems();
+         this.rootvalueText.setText(null);
+
+         if (reader2 != null) {
+             this.nameText.setText(reader2.getName());
+
+             try {
+               //  ZRowSet rows = ZRowSet.getInstance(reader2, null, true);
+            	 Dataset rows = reader2.read( null, 0);
+                 for (int i = 0; i < rows.getColumnCount(); i++) {
+                     this.keyCombo.addItem(rows.getColumnName(i));
+                     this.nameCombo.addItem(rows.getColumnName(i));
+                     this.parentKeyCombo.addItem(rows.getColumnName(i));
+                 }
+             } catch (Exception e) {
+                 // TODO Auto-generated catch block
+                 e.printStackTrace();
+             }
+         }
+
+         this.reader = reader2;
+     }
+
+     public void setModel(ZMap map) {
+         map.put(WebComponent.READER, this.reader);
+         map.put(WebComponent.KEY_FIELD, this.keyCombo.getSelectedItem());
+         map.put(WebComponent.LABEL_FIELD, this.nameCombo.getSelectedItem());
+
+         map.put(WebComponent.PARENT_KEY_FIELD,
+                 this.parentKeyCombo.getSelectedItem());
+
+         if (!"".equals(this.rootvalueText.getText())) {
+             map.put(WebComponent.ROOT_KEY_VALUE, this.rootvalueText.getText());
+         }
+     }
+ }
+
+ 
+ class OptionsPanel extends JPanel implements Settable {
+     JTable table;
+     
+     OptionsPanel() {
+         super(new BorderLayout());
+
+         Dimension d = new Dimension(25, 25);
+         JToolBar t = new JToolBar();
+
+         JButton b = new JButton(Util.getIcon(
+                 "/jatools/webform/icons/add.gif"));
+         b.setPreferredSize(d);
+         b.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent e) {
+                 newOption();
+             }
+         });
+
+         t.add(b);
+
+         b = new JButton(Util.getIcon("/jatools/webform/icons/delete.gif"));
+         b.setPreferredSize(d);
+         b.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent e) {
+                 delOption();
+             }
+         });
+         t.add(b);
+
+         b = new JButton(Util.getIcon("/jatools/webform/icons/up.gif"));
+         b.setPreferredSize(d);
+         b.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent e) {
+                 up();
+             }
+         });
+
+         t.add(b);
+
+         b = new JButton(Util.getIcon("/jatools/webform/icons/down.gif"));
+         b.setPreferredSize(d);
+         b.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent e) {
+                 down();
+             }
+         });
+         t.add(b);
+         add(t, BorderLayout.NORTH);
+         add(createTable(), BorderLayout.CENTER);
+     }
+
+     private Component createTable() {
+         table = new JTable(new OptionsTableModel(null));
+         table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+         resizeColumns();
+
+         return new JScrollPane(table);
+     }
+
+     protected void down() {
+         OptionsTableModel m = (OptionsTableModel) table.getModel();
+         int r = table.getSelectedRow();
+
+         if ((r > -1) && (r < (table.getRowCount() - 1))) {
+             m.moveRow(r, r, r + 1);
+             table.getSelectionModel().setSelectionInterval(r + 1, r + 1);
+         }
+     }
+
+     protected void up() {
+         OptionsTableModel m = (OptionsTableModel) table.getModel();
+         int r = table.getSelectedRow();
+
+         if (r > 0) {
+             m.moveRow(r, r, r - 1);
+             table.getSelectionModel().setSelectionInterval(r - 1, r - 1);
+         }
+     }
+
+     protected void delOption() {
+         int r = table.getSelectedRow();
+
+         if (r > -1) {
+             OptionsTableModel m = (OptionsTableModel) table.getModel();
+             m.removeRow(r);
+
+             if (r > (m.getRowCount() - 1)) {
+                 r = m.getRowCount() - 1;
+             }
+
+             table.getSelectionModel().setSelectionInterval(r, r);
+         }
+     }
+
+     protected void newOption() {
+         OptionsTableModel m = (OptionsTableModel) table.getModel();
+
+         m.addRow(new Object[] {
+                  Boolean.FALSE,
+                  "",
+                  ""
+         });
+
+         int r = m.getRowCount() - 1;
+         table.getSelectionModel().setSelectionInterval(r, r);
+     }
+
+     private void resizeColumns() {
+         TableColumn c = table.getColumn(table.getColumnName(0));
+         c.setPreferredWidth(30);
+         c = table.getColumn(table.getColumnName(1));
+         c.setPreferredWidth(75);
+         c = table.getColumn(table.getColumnName(2));
+         c.setPreferredWidth(75);
+     }
+
+     private void clear() {
+         OptionsTableModel m = (OptionsTableModel) table.getModel();
+         m.setNumRows(0);
+     }
+
+     public void setView(ZMap settings) {
+         Vector opt = (Vector) settings.get(WebComponent.STATIC_LIST);
+         clear();
+
+         if (opt != null) {
+             OptionsTableModel m = new OptionsTableModel(opt);
+             table.setModel(m);
+         }
+     }
+
+     public void setModel(ZMap map) {
+         OptionsTableModel m = (OptionsTableModel) table.getModel();
+         map.put(WebComponent.STATIC_LIST, m.getOptions());
+     }
+ }
+ 
+ class DynamicListPanel extends JPanel implements Settable {
+	// ZRowsReader reader;
+	 DatasetReader reader;
+     JComboBox keyCombo = new JComboBox();
+     JComboBox nameCombo = new JComboBox();
+     JTextField nameText = new JTextField();
+
+     //添加  蒋德华
+     JCheckBox emptyItemCheck=new JCheckBox("添加空选项");
+
+     DynamicListPanel() {
+         super(new GridBagLayout());
+
+         //first
+         GridBagConstraints gbc = new GridBagConstraints();
+         gbc.fill = GridBagConstraints.BOTH;
+         gbc.insets = new Insets(5, 0, 5, 0);
+         add(new JLabel("数据源:"), gbc); //$NON-NLS-1$
+
+         //   gbc.gridwidth = GridBagConstraints.REMAINDER;
+         gbc.weightx = 10;
+         add(nameText, gbc);
+         gbc.weightx = 0;
+
+         JButton edit = new JButton("..."); //$NON-NLS-1$
+         //蒋德华  修改 2007年11月7日
+//         edit.addActionListener(new ActionListener() {
+//                 public void actionPerformed(ActionEvent e) {
+//                     ZRowsReader reader = createReader();
+//
+//                     if (reader != null) {
+//                         DynamicListPanel.this.setReader(reader);
+//                     }
+//                 }
+//             });
+         edit.addActionListener(new ActionListener() {
+             public void actionPerformed(ActionEvent e) {
+//                 ZReaderChooser readerChooser = new ZReaderChooser(owner,
+//                         App.getConfiguration());
+                 ReaderChooser readerChooser = new ReaderChooser(owner,
+                         App.getConfiguration());
+                 readerChooser.setModal(true);
+                 readerChooser.show();
+                // ZRowsReader reader = readerChooser.getReader();
+                 DatasetReader reader = readerChooser.getReader();
+                 if ((reader != null) ) {
+//                     if(!reader.isValid()){
+//                         JOptionPane.showConfirmDialog(readerChooser,"数据源不合法！","提示对话框"
+//                                 ,JOptionPane.CLOSED_OPTION,JOptionPane.ERROR_MESSAGE);
+//                         return;
+//                     }
+                     DynamicListPanel.this.setReader(reader);
+                 }
+             }
+         });
+
+         edit.setFont(new Font("Arial", 0, 8)); //$NON-NLS-1$
+         edit.setPreferredSize(new Dimension(22, 22));
+
+         gbc.fill = GridBagConstraints.NONE;
+
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         gbc.insets = new Insets(0, 1, 0, 5);
+         add(edit, gbc);
+         gbc.insets = new Insets(5, 0, 5, 0);
+         gbc.gridwidth = 1;
+         gbc.fill = GridBagConstraints.BOTH;
+         add(new JLabel("键值字段:"), gbc); //$NON-NLS-1$
+
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+
+         add(keyCombo, gbc);
+
+         gbc.gridwidth = 1;
+         //            gbc.weightx = 0;
+         add(new JLabel("显示字段:"), gbc); //$NON-NLS-1$
+
+         //            gbc.insets = new Insets(5, 0, 5, 0);
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         add(nameCombo, gbc);
+
+
+         //add jdh 2007年11月7日
+         gbc.gridwidth=1;
+         add(new JLabel(" "), gbc); //$NON-NLS-1$
+         gbc.gridwidth = GridBagConstraints.REMAINDER;
+         add(emptyItemCheck, gbc);
+
+
+         gbc.weighty = 100;
+         add(Box.createVerticalGlue(), gbc);
+     }
+
+     public void setView(ZMap map) {
+    	// ZRowsReader reader = (ZRowsReader) map.get(WebComponent.READER);
+    	 DatasetReader reader = (DatasetReader) map.get(WebComponent.READER);
+         setReader(reader);
+
+         this.keyCombo.setSelectedItem(map.get(WebComponent.KEY_FIELD));
+         this.nameCombo.setSelectedItem(map.get(WebComponent.LABEL_FIELD));
+         emptyItemCheck.setSelected(map.get(WebComponent.COMBOBOX_CONTAINEMPTY).equals("1"));//20071107
+     }
+
+     private void setReader(DatasetReader reader2/**ZRowsReader reader2*/) {
+    	 this.keyCombo.removeAllItems();
+         this.nameCombo.removeAllItems();
+         this.nameText.setText(null);
+
+         if (reader2 != null) {
+             this.nameText.setText(reader2.getName());
+
+             try {
+                 //ZRowSet rows = ZRowSet.getInstance(reader2, null, true);
+            	 Dataset rows =  reader2.read( null, 0);
+
+                 for (int i = 0; i < rows.getColumnCount(); i++) {
+                     this.keyCombo.addItem(rows.getColumnName(i));
+                     this.nameCombo.addItem(rows.getColumnName(i));
+                 }
+             } catch (Exception e) {
+                 // TODO Auto-generated catch block
+                 e.printStackTrace();
+             }
+         }
+
+         this.reader = reader2;
+     }
+
+     public void setModel(ZMap map) {
+    	  map.put(WebComponent.READER, this.reader);
+          //蒋德华 added 2007年11月7日
+          map.put(WebComponent.COMBOBOX_CONTAINEMPTY,emptyItemCheck.isSelected()?"1":"0");
+
+          this.keyCombo.setSelectedItem(map.put(WebComponent.KEY_FIELD,
+                                                this.keyCombo.getSelectedItem()));
+          this.nameCombo.setSelectedItem(map.put(WebComponent.LABEL_FIELD,
+                  this.nameCombo.getSelectedItem()));
+     }
+ }
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+	
+	
+}
+interface Settable {
+    /**
+     * DOCUMENT ME!
+     *
+     * @param map DOCUMENT ME!
+     */
+    public void setView(ZMap map);
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param map DOCUMENT ME!
+     */
+    public void setModel(ZMap map);
+}

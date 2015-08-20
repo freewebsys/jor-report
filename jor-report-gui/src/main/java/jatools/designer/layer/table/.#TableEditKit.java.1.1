@@ -1,0 +1,2129 @@
+package com.jatools.designer.layer.table;
+
+import com.jatools.core.Messages;
+
+import com.jatools.designer.App;
+import com.jatools.designer.ClipBoard;
+import com.jatools.designer.InplaceEditor;
+import com.jatools.designer.ReportPanel;
+import com.jatools.designer.action.NewStaticTableAction;
+import com.jatools.designer.action.ReportAction;
+import com.jatools.designer.componenteditor.ComponentEditor;
+import com.jatools.designer.componenteditor.ComponentEditorFactory;
+import com.jatools.designer.layer.painter.SelectionFramePainter;
+import com.jatools.designer.layer.utils.MoveWorker;
+import com.jatools.designer.peer.ComponentPeer;
+import com.jatools.designer.peer.ComponentPeerFactory;
+import com.jatools.designer.peer.TablePeer;
+import com.jatools.designer.toolbox.ToolboxTarget;
+import com.jatools.designer.undo.AddEdit;
+import com.jatools.designer.undo.GroupEdit;
+import com.jatools.designer.undo.PropertyEdit;
+import com.jatools.designer.undo.TablePropertyEdit;
+
+import com.jatools.swing.MessageBox;
+import com.jatools.swing.SpinEditor;
+
+import com.sun.rsasign.c;
+
+import jatools.component.Component;
+import jatools.component.ComponentConstants;
+import jatools.component.Label;
+
+import jatools.component.table.Cell;
+import jatools.component.table.CellStore;
+import jatools.component.table.GridComponent;
+import jatools.component.table.PanelStore;
+import jatools.component.table.Table;
+import jatools.component.table.TableBase;
+
+import jatools.util.Util;
+
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Line2D;
+
+import java.beans.PropertyChangeEvent;
+
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Vector;
+
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.undo.CompoundEdit;
+
+
+/**
+ * @author java9
+ */
+public class TableEditKit implements ActionListener {
+    private static int DEFAULT_ROW_HEIGHT = 20;
+    private static int DEFAULT_COLUMN_WIDTH = 60;
+    static int INSIDE = 0;
+    static int EDGE = 1;
+    static int OUTSIDE = 2;
+
+    // commands available
+    private final static String BATCH = "BATCH"; //$NON-NLS-1$
+    final protected static int STATE_IDLE = 0;
+    private final static int STATE_SELECTING = 1;
+    private final static int STATE_RESIZING = 2;
+    private final static int PRE_TABLE_DRAG = 3;
+    private final static int TABLE_DRAG = 203;
+    final static int SUBSTATE_IDLE = 0;
+    private final static int SUBSTATE_ROW_RESIZE_READY = 1;
+    private final static int SUBSTATE_COLUMN_RESIZE_READY = 2;
+    private final static int SUBSTATE_DRAG_READY = 3;
+    private final static int SUBSTATE_ROW_RESIZING = 4;
+    private final static int SUBSTATE_COLUMN_RESIZING = 5;
+    private final static int SUBSTATE_CELL_SELECTED = 8;
+    private final static int VERTICAL = 1;
+    private final static int HORIZONTAL = 0;
+
+    /**
+     * DOCUMENT ME!
+     */
+    private final static Cursor CELL_SELECT_CURSOR = Util.createCursor((ImageIcon) Util.getIcon(
+                "/com/jatools/icons/cursor0.gif")); //$NON-NLS-1$
+    private final static Cursor RESIZE_ROW_CURSOR = Cursor.getPredefinedCursor(Cursor.N_RESIZE_CURSOR);
+    private final static Cursor RESIZE_COL_CURSOR = Cursor.getPredefinedCursor(Cursor.E_RESIZE_CURSOR);
+    private final static Cursor MOVE_CURSOR = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+    private final static Cursor DEFAULT_CURSOR = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+    private final static BasicStroke RESIZE_STROKE = new BasicStroke(1, BasicStroke.CAP_BUTT,
+            BasicStroke.JOIN_MITER, 1.0f, new float[] {
+                1.0f,
+                1.0f
+            }, 0.0f);
+    final protected static String INSERT_ROW_BEFORE = "insert.row.before"; //$NON-NLS-1$
+    final protected static String INSERT_ROW_AFTER = "insert.row.after"; //$NON-NLS-1$
+    private final static String INSERT_COL_AFTER = "insert.col.after"; //$NON-NLS-1$
+    private final static String INSERT_COL_BEFORE = "insert.col.before"; //$NON-NLS-1$
+    private final static String INSERT_ROW_BEFORE_N = "insert.row.before.n"; //$NON-NLS-1$
+    private final static String INSERT_ROW_AFTER_N = "insert.row.after.n"; //$NON-NLS-1$
+    private final static String INSERT_COL_AFTER_N = "insert.col.after.n"; //$NON-NLS-1$
+    private final static String INSERT_COL_BEFORE_N = "insert.col.before.n"; //$NON-NLS-1$
+    final protected static String REMOVE_ROW = "remove.row"; //$NON-NLS-1$
+    private final static String REMOVE_COL = "remove.col"; //$NON-NLS-1$
+    private final static String UNITE_CELL = "unite.cell"; //$NON-NLS-1$
+    private final static String SHOW_GRID = "rim.property"; //$NON-NLS-1$
+    private final static String UN_UNITE_CELL = "table.cancel"; //$NON-NLS-1$
+    final protected static String RESIZE_ROW_HEIGHTS = "resize.row.heights"; //$NON-NLS-1$
+    private final static String RESIZE_COL_WIDTHS = "remove.col.widths"; //$NON-NLS-1$
+    private Cursor cursor = CELL_SELECT_CURSOR;
+    _State info = new _State();
+
+    /**
+     * DOCUMENT ME!
+     */
+    private _Line vertResizeBar;
+
+    /**
+     * DOCUMENT ME!
+     */
+    private _Line horzResizeBar;
+
+    /**
+     * DOCUMENT ME!
+     */
+    public TablePeer tablePeer;
+    private Point off = new Point();
+    private InplaceEditor editor = new InplaceEditor();
+
+    /**
+     * DOCUMENT ME!
+     */
+    private com.jatools.designer.layer.utils.MoveWorker worker;
+
+    /**
+     * DOCUMENT ME!
+     */
+
+    // private AbstractAction columnsAsParentAction;
+    /**
+     * DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    private JPopupMenu ppm;
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param type
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    JPopupMenu getPopup() {
+        if (ppm == null) {
+            ppm = createPopupMenu();
+        }
+
+        return ppm;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+
+    /**
+     * @param gridPeer2
+     */
+    void setTablePeer(TablePeer gridPeer, int offx, int offy) {
+        if (tablePeer != null) {
+            gridPeer.setFocused(false);
+        }
+
+        this.tablePeer = gridPeer;
+        info.mainState = STATE_IDLE;
+        info.subState = SUBSTATE_IDLE;
+        off.setLocation(offx, offy);
+
+        if (gridPeer != null) {
+            gridPeer.setFocused(true);
+        }
+
+        if (ppm != null) {
+            ppm.setVisible(false);
+        }
+    }
+
+    /**
+     *
+     * @param e
+     */
+    public void mouseDragged(int modifier, int x, int y, int deltaX, int deltaY) {
+        boolean redraw = true;
+
+        if (info.mainState == STATE_RESIZING) {
+            doResize(x, y);
+        } else if (info.mainState == STATE_SELECTING) {
+            // if (!modal.getClip().contain(e.getX(), e.getY())) {
+            // curPos = modal.dp2lp(adjustOuterPoint(e.getPoint()));
+            // } else {
+            // curPos = modal.dp2lp(e.getPoint());
+            // }
+            doSelect(x, y);
+        } else if (info.mainState == STATE_IDLE) {
+            // curPos = modal.dp2lp(e.getPoint());
+            if ((info.subState == SUBSTATE_ROW_RESIZE_READY) ||
+                    (info.subState == SUBSTATE_COLUMN_RESIZE_READY)) {
+                startResize(x, y);
+            } else if (info.subState != SUBSTATE_DRAG_READY) {
+                startSelect(x, y);
+            }
+        } else if (info.mainState == TABLE_DRAG) {
+            // curPos = modal.dp2lp(e.getPoint());
+            worker.move(deltaX, deltaY);
+            redraw = false;
+        }
+
+        info.lastMousePosition.setLocation(x, y);
+
+        if (redraw) {
+            tablePeer.getOwner().repaint();
+        }
+    }
+
+    /**
+     *
+     * @param e
+     */
+    public void mouseMoved(int modifier, int x, int y, int deltaX, int deltaY) {
+        try {
+            if (info.mainState == STATE_IDLE) {
+                // 选中行高列宽调整点?
+                Object ho = hitResizer(x, y);
+
+                if (ho instanceof _RowSizer) { // 行高调整点选中
+                    cursor = RESIZE_ROW_CURSOR;
+
+                    _RowSizer row = (_RowSizer) ho;
+                    info.minPoint.y = row.top;
+                    info.startRow = row.index;
+                    info.subState = SUBSTATE_ROW_RESIZE_READY;
+                } else if (ho instanceof _ColumnSizer) { // 列宽调整点
+                    cursor = RESIZE_COL_CURSOR;
+
+                    _ColumnSizer column = (_ColumnSizer) ho;
+                    info.minPoint.x = column.left;
+
+                    info.startCol = column.index;
+                    info.subState = SUBSTATE_COLUMN_RESIZE_READY;
+                } else {
+                    int area = hitArea(x, y);
+
+                    if (area == EDGE) { // 选中表格移动框
+                        cursor = MOVE_CURSOR;
+                        info.subState = PRE_TABLE_DRAG;
+                    } else if (area == INSIDE) { // 表格里面
+                        cursor = CELL_SELECT_CURSOR;
+                        info.subState = SUBSTATE_IDLE;
+                    } else { // 表格外面
+                        cursor = DEFAULT_CURSOR;
+                        info.subState = SUBSTATE_IDLE;
+                    }
+                }
+            } else {
+                endDrag();
+            }
+
+            info.lastMousePosition.x = x;
+            info.lastMousePosition.y = y;
+        } catch (Exception ex) {
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param x
+     *            DOCUMENT ME!
+     * @param y
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    protected Object hitResizer(int x, int y) {
+        TableBase table = (TableBase) tablePeer.getComponent();
+
+        int hit = tablePeer.hitSelection(x, y);
+
+        if ((hit == TablePeer.NULL) || (hit == TablePeer._SOUTH_EAST)) {
+            return null;
+        }
+
+        Rectangle sel = tablePeer.getSelection();
+
+        if (hit == TablePeer._EAST) {
+            int lastColumn = (sel.x + sel.width) - 1;
+
+            return new _ColumnSizer(lastColumn, getColumnFrom(table, lastColumn));
+        } else if (hit == TablePeer._SOUTH) {
+            int lastRow = (sel.y + sel.height) - 1;
+
+            return new _RowSizer(lastRow, getRowFrom(table, lastRow));
+        }
+
+        return null;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param grid
+     *            DOCUMENT ME!
+     * @param row
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    protected static int getRowFrom(TableBase grid, int row) {
+        return grid.getRowY(row);
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param grid
+     *            DOCUMENT ME!
+     * @param column
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    protected static int getColumnFrom(TableBase grid, int column) {
+        return grid.getColumnX(column);
+    }
+
+    /**
+     *
+     * @param e
+     */
+    public void mouseReleased(int modifier, int x, int y) {
+        endDrag();
+    }
+
+    /**
+     *
+     * @param point
+     */
+    void doResize(int x, int y) {
+        if (info.subState == SUBSTATE_COLUMN_RESIZING) {
+            if (x == info.lastMousePosition.x) {
+                return;
+            }
+
+            int x1 = Math.max(x, info.minPoint.x);
+            vertResizeBar.moveTo(x1, 0);
+        } else if (info.subState == SUBSTATE_ROW_RESIZING) {
+            if (y == info.lastMousePosition.y) {
+                return;
+            }
+
+            int y1 = Math.max(y, info.minPoint.y);
+            horzResizeBar.moveTo(0, y1);
+        }
+    }
+
+    /**
+     *
+     * @param point
+     */
+    void doSelect(int x, int y) {
+        Rectangle selection = new Rectangle();
+
+        try {
+            Cell cid = hitCell(getTable(), x, y);
+
+            // if last selection be the same as current one, do nothing
+            if ((info.lastSelCell.x == cid.column) && (info.lastSelCell.y == cid.row)) {
+                return;
+            }
+
+            info.lastSelCell.x = cid.column;
+            info.lastSelCell.y = cid.row;
+            selection.setRect(info.startCol, info.startRow, cid.column, cid.row);
+            selection.x = Math.min(info.startCol, cid.column);
+            selection.y = Math.min(info.startRow, cid.row);
+            selection.width = Math.abs(cid.column - info.startCol) + 1;
+            selection.height = Math.abs(cid.row - info.startRow) + 1;
+
+            setSelection(selection);
+        } catch (Exception e) {
+        }
+
+        ;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param selection
+     *            DOCUMENT ME!
+     */
+    void setSelection(Rectangle selection) {
+        tablePeer.setSelection(selection);
+    }
+
+    /**
+     */
+    void endDrag() {
+        if (info.mainState != STATE_IDLE) {
+            if (info.mainState == STATE_SELECTING) {
+                endSelect();
+            } else if (info.mainState == STATE_RESIZING) {
+                endResize();
+            } else if (info.mainState == TABLE_DRAG) {
+                endMove();
+            }
+        }
+
+        info.mainState = STATE_IDLE;
+        info.subState = SUBSTATE_IDLE;
+    }
+
+    /**
+     *
+     */
+    private void endMove() {
+        ReportPanel owner = tablePeer.getOwner();
+        GroupEdit edit = new GroupEdit();
+
+        if (worker != null) {
+            try {
+                worker.close(edit);
+
+                owner.addEdit(edit);
+
+                MoveWorker.validParent(getTable());
+                off.setLocation(0, 0);
+                owner.childPointAsScreenPoint(tablePeer, off);
+            } catch (Exception e) {
+                e.printStackTrace();
+
+                // TODO Auto-generated catch block
+                MessageBox.error(owner, e.getMessage());
+                owner.getUndoManager().undo();
+                owner.getUndoManager().discardEdit(edit);
+            }
+        }
+
+        tablePeer.getOwner().repaint();
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param t
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    private static int[] getColumnWidths(TableBase t) {
+        int[] cols = new int[t.getColumnCount()];
+
+        for (int i = 0; i < cols.length; i++) {
+            cols[i] = t.getColumnWidth(i);
+        }
+
+        return cols;
+    }
+
+    /**
+     */
+    private void endResize() {
+        int s;
+
+        TableBase table = (TableBase) tablePeer.getComponent();
+
+        try {
+            Rectangle selection = getResizeSelction(); ////tablePeer.getSelection();
+
+            if (info.subState == SUBSTATE_COLUMN_RESIZING) {
+                s = info.lastMousePosition.x - info.minPoint.x;
+
+                int[] oldVal = getColumnWidths(table);
+
+                if (((selection.x + selection.width) - 1) == info.startCol) {
+                    for (int i = selection.x; i < (selection.x + selection.width); i++)
+                        table.setColumnWidth(i, s);
+                } else {
+                    table.setColumnWidth(info.startCol, s);
+                }
+
+                int[] newVal = getColumnWidths(table);
+
+                PropertyEdit edit = new TablePropertyEdit(tablePeer,
+                        ComponentConstants.PROPERTY_COLUMN_WIDTHS, oldVal, newVal);
+                vertResizeBar = null;
+
+                tablePeer.getOwner().addEdit(edit);
+            } else if (info.subState == SUBSTATE_ROW_RESIZING) {
+                s = info.lastMousePosition.y - info.minPoint.y;
+
+                int[] oldVal = table.getRowHeights();
+
+                if (((selection.y + selection.height) - 1) == info.startRow) {
+                    for (int i = selection.y; i < (selection.y + selection.height); i++) {
+                        table.setRowHeight(i, s);
+                    }
+                } else {
+                    int dy = s - table.getRowHeight(info.startRow);
+                    table.setRowHeight(info.startRow, s);
+
+                    if (tablePeer.isFixedHeight() && (info.startRow < (table.getRowCount() - 1))) {
+                        table.setRowHeight(info.startRow + 1,
+                            table.getRowHeight(info.startRow + 1) - dy);
+                    }
+                }
+
+                int[] newVal = table.getRowHeights();
+
+                PropertyEdit edit = new TablePropertyEdit(tablePeer,
+                        ComponentConstants.PROPERTY_ROW_HEIGHTS, oldVal, newVal);
+                tablePeer.getOwner().addEdit(edit);
+
+                horzResizeBar = null;
+            }
+
+            table.invalid();
+            this._repaint();
+        } catch (Exception e) {
+            System.out.println(e.toString());
+        }
+    }
+
+    protected Rectangle getResizeSelction() {
+        return tablePeer.getSelection();
+    }
+
+    /**
+    */
+    private void endSelect() {
+        info.mainState = STATE_IDLE;
+    }
+
+    /**
+     *
+     * @param point
+     */
+    private void startResize(int x, int y) {
+        info.mainState = STATE_RESIZING;
+        info.subState = (info.subState == SUBSTATE_ROW_RESIZE_READY) ? SUBSTATE_ROW_RESIZING
+                                                                     : SUBSTATE_COLUMN_RESIZING;
+
+        if (info.subState == SUBSTATE_COLUMN_RESIZING) {
+            x = Math.max(x, info.minPoint.x);
+            vertResizeBar = new _Line(VERTICAL, x);
+        } else {
+            y = Math.max(y, info.minPoint.y);
+            horzResizeBar = new _Line(HORIZONTAL, y);
+        }
+    }
+
+    /**
+     *
+     * @param point
+     */
+    private Cell startSelect(int x, int y) {
+        try {
+            Cell cell = hitCell(getTable(), x, y);
+
+            // System.out.println(cell);
+            cell = leadingCell(getTable(), cell);
+
+            // System.out.println(cell);
+            Rectangle selection = new Rectangle();
+
+            selection.setRect(cell.column, cell.row, 1, 1);
+            info.subState = SUBSTATE_CELL_SELECTED;
+
+            // change focused cell
+            // save current state and selection start from ...
+            info.startRow = selection.y;
+            info.startCol = selection.x;
+            info.lastSelCell.x = info.startCol;
+            info.lastSelCell.y = info.startRow;
+            info.mainState = STATE_SELECTING;
+
+            setSelection((Rectangle) selection.clone());
+
+            if (this.cursor != CELL_SELECT_CURSOR) {
+                this.cursor = CELL_SELECT_CURSOR;
+            }
+
+            return cell;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param x
+     *            DOCUMENT ME!
+     * @param y
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public static Cell hitCell(TableBase grid, int x, int y) {
+        // ZTable grid = (ZTable) gridPeer.getTarget();
+        int column = -1;
+        int row = -1;
+        int x1 = 0;
+
+        do {
+            column++;
+            x1 += grid.getColumnWidth(column);
+        } while (x1 < x);
+
+        int y1 = 0;
+
+        do {
+            row++;
+            y1 += grid.getRowHeight(row);
+        } while (y1 < y);
+
+        Cell cell = grid.getCellstore().getCell(row, column);
+
+        return (cell == null) ? new Cell(row, column) : cell;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param table
+     *            DOCUMENT ME!
+     * @param cell
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public static Cell leadingCell(TableBase table, Cell cell) {
+        Cell c = table.getCellstore().getCellOver(cell.row, cell.column);
+
+        if ((c != null) && c.contains(cell.row, cell.column)) {
+            return c;
+        } else {
+            return cell;
+        }
+    }
+
+    /**
+     * @param modifier
+     * @param x
+     * @param y
+     */
+
+    /**
+     * @param modifier
+     * @param x
+     * @param y
+     * @uml.property name="cursor"
+     */
+    public Cursor getCursor() {
+        return cursor;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    protected JPopupMenu createPopupMenu() {
+        JPopupMenu pop = new JPopupMenu();
+
+        ReportPanel panel = tablePeer.getOwner();
+        Action[] as = panel.getClipActions();
+
+        for (int i = 0; i < as.length; i++) {
+            pop.add(as[i]);
+        }
+
+        pop.addSeparator();
+
+        JMenu menu = new JMenu(Messages.getString("ZTableHandler.92")); //$NON-NLS-1$
+
+        Action[] inserts = new Action[0]; //(App.getActiveOwner() == null) ? new Action[0]
+                                          //      : App.getActiveOwner()
+                                          //              .getInsertableActions();
+
+        for (int i = 1; i < inserts.length; i++) {
+            if (!(inserts[i] instanceof NewStaticTableAction)) {
+                menu.add(new _InsertItem((ReportAction) inserts[i]));
+            }
+        }
+
+        if (!panel.simple) {
+            pop.add(menu);
+        }
+
+        pop.addSeparator();
+
+        _PopAction mergeAction = new _PopAction(Messages.getString("ZGridController.12")); //$NON-NLS-1$
+        mergeAction.putValue(Action.ACTION_COMMAND_KEY, UNITE_CELL);
+        pop.add(mergeAction);
+
+        _PopAction unmergeAction = new _PopAction(Messages.getString("ZGridController.11")); //$NON-NLS-1$
+        unmergeAction.putValue(Action.ACTION_COMMAND_KEY, UN_UNITE_CELL);
+        pop.add(unmergeAction);
+
+        // pop.add("撤消单元格");
+        pop.addSeparator();
+
+        AbstractAction action = null;
+
+        // if (type != DATA_BOUND_TABLE) {
+        // /////////
+        menu = new JMenu(Messages.getString("ZTableHandler.o")); //$NON-NLS-1$
+        pop.add(menu);
+
+        action = new _PopAction(Messages.getString("ZTableHandler.p")); //$NON-NLS-1$
+        action.putValue(Action.ACTION_COMMAND_KEY, INSERT_ROW_BEFORE);
+        menu.add(action);
+
+        action = new _PopAction(Messages.getString("ZTableHandler.l")); //$NON-NLS-1$
+        action.putValue(Action.ACTION_COMMAND_KEY, INSERT_ROW_AFTER);
+        menu.add(action);
+
+        pop.add(menu);
+
+        menu = new JMenu(Messages.getString("ZTableHandler.k")); //$NON-NLS-1$
+        pop.add(menu);
+
+        action = new _PopAction(Messages.getString("ZTableHandler.j")); //$NON-NLS-1$
+        action.putValue(Action.ACTION_COMMAND_KEY, INSERT_COL_BEFORE);
+        menu.add(action);
+
+        action = new _PopAction(Messages.getString("ZTableHandler.g")); //$NON-NLS-1$
+        action.putValue(Action.ACTION_COMMAND_KEY, INSERT_COL_AFTER);
+        menu.add(action);
+
+        menu = new JMenu("批量插入行"); //$NON-NLS-1$
+        pop.add(menu);
+
+        JMenu tmp0 = new JMenu(Messages.getString("ZTableHandler.p"));
+        menu.add(tmp0);
+
+        JMenu tmp1 = new JMenu(Messages.getString("ZTableHandler.l"));
+
+        menu.add(tmp1);
+
+        for (int i = 3; i < 11; i++) {
+            action = new _PopAction("" + i);
+            action.putValue(Action.ACTION_COMMAND_KEY, INSERT_ROW_BEFORE_N);
+
+            JMenuItem mi = new JMenuItem(action);
+            mi.putClientProperty(BATCH, new Integer(i));
+
+            tmp0.add(mi);
+
+            action = new _PopAction("" + i);
+            action.putValue(Action.ACTION_COMMAND_KEY, INSERT_ROW_AFTER_N);
+            mi = new JMenuItem(action);
+            mi.putClientProperty(BATCH, new Integer(i));
+
+            tmp1.add(mi);
+        }
+
+        menu = new JMenu("批量插入列"); //$NON-NLS-1$
+        pop.add(menu);
+
+        tmp0 = new JMenu(Messages.getString("ZTableHandler.j"));
+        menu.add(tmp0);
+        tmp1 = new JMenu(Messages.getString("ZTableHandler.g"));
+
+        menu.add(tmp1);
+
+        for (int i = 3; i < 11; i++) {
+            action = new _PopAction("" + i);
+            action.putValue(Action.ACTION_COMMAND_KEY, INSERT_COL_BEFORE_N);
+
+            JMenuItem mi = new JMenuItem(action);
+            mi.putClientProperty(BATCH, new Integer(i));
+
+            tmp0.add(mi);
+
+            action = new _PopAction("" + i);
+            action.putValue(Action.ACTION_COMMAND_KEY, INSERT_COL_AFTER_N);
+            mi = new JMenuItem(action);
+            mi.putClientProperty(BATCH, new Integer(i));
+
+            tmp1.add(mi);
+        }
+
+        // /////////
+        action = new _PopAction(Messages.getString("ZGridController.16")); //$NON-NLS-1$
+        action.putValue(Action.ACTION_COMMAND_KEY, REMOVE_ROW);
+        pop.add(action);
+
+        // ////////
+        action = new _PopAction(Messages.getString("ZGridController.15")); //$NON-NLS-1$
+        action.putValue(Action.ACTION_COMMAND_KEY, REMOVE_COL);
+        pop.add(action);
+
+        action = new _PopAction(Messages.getString("ZTableHandler.8")); //$NON-NLS-1$
+        action.putValue(Action.ACTION_COMMAND_KEY, RESIZE_ROW_HEIGHTS);
+
+        if (!panel.simple) {
+            pop.addSeparator();
+            pop.add(action);
+        }
+
+        action = new _PopAction(Messages.getString("ZTableHandler.9")); //$NON-NLS-1$
+        action.putValue(Action.ACTION_COMMAND_KEY, RESIZE_COL_WIDTHS);
+
+        if (!panel.simple) {
+            pop.add(action);
+        }
+
+        // if (columnsAsParentAction == null) {
+        // columnsAsParentAction = new
+        // AbstractAction(Messages.getString("ZTableHandler.10")) {
+        // //$NON-NLS-1$
+        // public void actionPerformed(ActionEvent e) {
+        // parentAsColumnManager();
+        // }
+        // };
+        // }
+        //
+        // if (!panel.simple) {
+        // pop.addSeparator();
+        // pop.add(columnsAsParentAction);
+        // }
+        action = new _PopAction(Messages.getString("ZGridController.17")); //$NON-NLS-1$
+        action.putValue(Action.ACTION_COMMAND_KEY, SHOW_GRID);
+
+        JCheckBoxMenuItem gridVisible = new JCheckBoxMenuItem(action);
+        gridVisible.setSelected(true);
+
+        if (!panel.simple) {
+            pop.addSeparator();
+            pop.add(gridVisible);
+        }
+
+        return pop;
+    }
+
+    /**
+     * @param modifier
+     * @param i
+     * @param j
+     */
+    public void mousePressed(int modifier, int x, int y) {
+    	System.out.println("mousePressed");
+        JPopupMenu ppp = getPopup();
+
+        if ((MouseEvent.META_MASK & modifier) != 0) {
+            JComponent panel = tablePeer.getOwner().getGroupPanel();
+            ppp.show(panel, x + off.x, y + off.y);
+
+            return;
+        } else {
+            if (ppp.isVisible()) {
+                ppp.setVisible(false);
+            }
+        }
+
+        if (info.subState == PRE_TABLE_DRAG) {
+            info.mainState = TABLE_DRAG;
+            info.subState = SUBSTATE_IDLE;
+
+            SelectionFramePainter paintLayer = tablePeer.getOwner().getSelectedFrameLayer();
+
+            worker = new MoveWorker(tablePeer.getOwner(), true, ComponentPeer.CENTER, paintLayer,
+                    new ComponentPeer[] {
+                        tablePeer
+                    });
+
+            paintLayer.setSelectedFrames(worker.getFrames());
+        } else if ((info.subState == SUBSTATE_IDLE) && ((MouseEvent.META_MASK & modifier) == 0)) {
+            startSelect(x, y);
+            endSelect();
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param
+     * @param x
+     *
+     * @return DOCUMENT ME!
+     */
+    int hitArea(int x, int y) {
+        TableBase table = getTable();
+        int tw = table.getWidth();
+        int th = table.getHeight();
+
+        Rectangle outer = new Rectangle(-2, -2, tw + 4, th + 4);
+
+        if (!outer.contains(x, y)) {
+            return OUTSIDE;
+        }
+
+        Rectangle inner = new Rectangle(2, 2, tw - 2, th - 2);
+
+        if (inner.contains(x, y)) {
+            return INSIDE;
+        } else {
+            return EDGE;
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     */
+    void _repaint() {
+        tablePeer.setSelection(tablePeer.getSelection(), false);
+        // tablePeer.getOwner().getReportPeer().validate(true);
+        tablePeer.getComponent().invalid();
+        tablePeer.getOwner().repaint();
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param edit
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public boolean unitCell(GroupEdit edit) {
+        TableBase t = getTable();
+
+        Rectangle sel = (Rectangle) tablePeer.getSelection().clone();
+
+        TablePropertyListener lst = new TablePropertyListener(tablePeer);
+        t.addPropertyChangeListener(lst);
+
+        boolean merged = t.mergeCell(sel.y, sel.x, sel.width, sel.height);
+        t.removePropertyChangeListener(lst);
+
+        if (merged) {
+            lst.applyEdit(edit);
+        }
+
+        return merged;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param r
+     *            DOCUMENT ME!
+     * @param c
+     *            DOCUMENT ME!
+     * @param w
+     *            DOCUMENT ME!
+     * @param h
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public boolean insertChildren(int r, int c, int w, int h, Class prepareClass, GroupEdit edit) {
+        TablePropertyListener lst = new TablePropertyListener(tablePeer);
+
+        TableBase table = (TableBase) tablePeer.getComponent();
+        CellStore store = table.getCellstore();
+        PanelStore panelstore = table.getPanelstore();
+
+        for (int i = r; i < (r + h); i++) {
+            for (int j = c; j < (c + w); j++) {
+                Component com = store.getComponentOver(i, j);
+                Cell newCell;
+
+                if (com == null) {
+                    newCell = new Cell(i, j);
+                } else {
+                    if ((com.getCell().row == i) && (com.getCell().column == j)) {
+                        newCell = (Cell) com.getCell().clone();
+
+                        Component p = com.getParent();
+
+                        com.getParent().remove(com);
+
+                        PropertyChangeEvent e = new PropertyChangeEvent(p,
+                                ComponentConstants.PROPERTY_DELETE, com, null);
+
+                        lst.propertyChange(e);
+                    } else {
+                        continue;
+                    }
+                }
+
+                try {
+                    Component child = (Component) prepareClass.newInstance();
+                    child.setCell(newCell);
+
+                    Component p = panelstore.getComponentOver(r, c);
+                    p.add(child);
+
+                    PropertyChangeEvent e = new PropertyChangeEvent(p,
+                            ComponentConstants.PROPERTY_ADD, child, null);
+
+                    lst.propertyChange(e);
+                } catch (InstantiationException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                } catch (IllegalAccessException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
+            }
+        }
+
+        lst.applyEdit(edit);
+
+        return true;
+    }
+
+    /**
+     * DOCUMENT ME!
+     */
+    public void cut() {
+        copy();
+
+        try {
+            Rectangle r = tablePeer.getSelection();
+            CompoundEdit edit = new GroupEdit();
+            delete(new Cell(r), edit);
+            edit.addEdit(new TablePropertyEdit(tablePeer));
+            tablePeer.getOwner().addEdit(edit);
+            tablePeer.setSelection(r);
+            _repaint();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     */
+    public void copy() {
+        final String PARENT = "old.parent";
+        TableBase t = (TableBase) tablePeer.getComponent();
+        CellStore store = t.getCellstore();
+        Rectangle r = tablePeer.getSelection();
+
+        Component first = store.getComponent(r.y, r.x);
+
+        if ((first != null) && first.getCell().equals(new Cell(r))) {
+            Cell save = first.getCell();
+            first.setCell(null); // 为了保存大小
+
+            try {
+                ClipBoard.getDefaultClipBoard().setContents(new Component[] {
+                        first
+                    });
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } finally {
+                first.setCell(save);
+            }
+        } else {
+            Vector sels = new Vector();
+
+            for (int i = r.y; i < (r.y + r.height); i++) {
+                for (int j = r.x; j < (r.x + r.width); j++) {
+                    Component com = store.getComponent(i, j);
+
+                    if (com != null) {
+                        sels.add(com);
+                        com.setClientProperty(PARENT, com.getParent());
+                        com.getCell().column -= r.x;
+                        com.getCell().row -= r.y;
+                    }
+                }
+            }
+
+            int[] columns = new int[r.width];
+
+            for (int i = 0; i < columns.length; i++) {
+                columns[i] = t.getColumnWidth(r.x + i);
+            }
+
+            int[] rows = new int[r.height];
+
+            for (int i = 0; i < rows.length; i++) {
+                rows[i] = t.getRowHeight(r.y + i);
+            }
+
+            Table newtable = new Table(rows, columns);
+            newtable.setChildren(sels);
+
+            Component[] selection = new Component[] {
+                    newtable
+                };
+
+            try {
+                ClipBoard.getDefaultClipBoard().setContents(selection);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } finally {
+                Iterator it = sels.iterator();
+
+                while (it.hasNext()) {
+                    Component c = (Component) it.next();
+                    c.setParent((Component) c.getClientProperty(PARENT));
+                    c.getCell().column += r.x;
+                    c.getCell().row += r.y;
+                }
+            }
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     */
+    public void delete() {
+        CompoundEdit edit = new GroupEdit();
+        delete(new Cell(tablePeer.getSelection()), edit);
+        edit.addEdit(new TablePropertyEdit(tablePeer));
+        tablePeer.getOwner().addEdit(edit);
+        tablePeer.setSelection(tablePeer.getSelection());
+        _repaint();
+    }
+
+    /**
+     * DOCUMENT ME!
+     */
+    public void paste() {
+        // 注意 :这些孩子们无名无姓，干净得很
+        int left = Integer.MAX_VALUE;
+        int top = Integer.MAX_VALUE;
+        int bottom = 0;
+        int right = 0;
+
+        TableBase t = (TableBase) tablePeer.getComponent();
+        Rectangle sel = tablePeer.getSelection();
+
+        try {
+            Component[] children = ClipBoard.getDefaultClipBoard().getContents();
+
+            // 如果表到表copy,数量不限
+            // 如果非表到表,则只能复制一个
+            if (children.length != 1) {
+                // cell 为空,且个数大于1
+                return;
+            }
+
+            if (children[0] instanceof TableBase) {
+                children = (Component[]) ((TableBase) children[0]).getChildren()
+                                          .toArray(new Component[0]);
+            } else {
+                int row = sel.y;
+                int column = sel.x;
+                children[0].setCell(leadingCell(t, new Cell(row, column)));
+            }
+
+            CompoundEdit edit = new GroupEdit();
+
+            for (int i = 0; i < children.length; i++) {
+                Component comp = children[i];
+                Cell cell = (Cell) comp.getCell();
+
+                if (cell.column < left) {
+                    left = cell.column;
+                }
+
+                if (cell.row < top) {
+                    top = cell.row;
+                }
+
+                if (((cell.row + cell.rowSpan) - 1) > bottom) {
+                    bottom = (cell.row + cell.rowSpan) - 1;
+                }
+
+                if (((cell.column + cell.colSpan) - 1) > right) {
+                    right = (cell.column + cell.colSpan) - 1;
+                }
+            }
+
+            int offcol = sel.x - left;
+            int offrow = sel.y - top;
+
+            Rectangle selection = (Rectangle) sel.clone();
+            selection.width = right - left + 1;
+            selection.height = bottom - top + 1;
+
+            int less = (selection.width + selection.x) - t.getColumnCount();
+
+            if (less > 0) {
+                selection.width -= less;
+            }
+
+            less = (selection.height + selection.y) - t.getRowCount();
+
+            if (less > 0) {
+                selection.height -= less;
+            }
+
+            Cell intercell = new Cell(selection);
+            delete(intercell, edit);
+
+            PanelStore panelstore = t.getPanelstore();
+            TablePropertyListener lst = new TablePropertyListener(tablePeer);
+
+            for (int i = 0; i < children.length; i++) {
+                Component comp = children[i];
+
+                // comp.setBackColor(Color.red) ;
+                Cell cell = (Cell) comp.getCell();
+                cell.column += offcol;
+                cell.row += offrow;
+
+                if (!intercell.contains(cell.row, cell.column)) {
+                    continue;
+                }
+
+                if (cell.row2() > intercell.row2()) {
+                    cell.rowSpan -= (cell.row2() - intercell.row2());
+                }
+
+                if (cell.column2() > intercell.column2()) {
+                    cell.colSpan -= (cell.column2() - intercell.column2());
+                }
+
+                Component p = panelstore.getComponentOver(cell.row, cell.column);
+                p.add(comp);
+
+                PropertyChangeEvent e = new PropertyChangeEvent(p, ComponentConstants.PROPERTY_ADD,
+                        comp, null);
+
+                lst.propertyChange(e);
+            }
+
+            lst.applyEdit(edit);
+
+            // 给这些新加入的孩子们取个名
+            // createNameForNoName(page);
+            edit.addEdit(new TablePropertyEdit(tablePeer));
+            tablePeer.getOwner().addEdit(edit);
+            tablePeer.setSelection(selection);
+            _repaint();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    private void delete(Cell cell, CompoundEdit edit) {
+        TablePropertyListener lst = new TablePropertyListener(tablePeer);
+
+        CellStore store = ((TableBase) tablePeer.getComponent()).getCellstore();
+
+        for (int i = cell.row; i <= cell.row2(); i++) {
+            for (int j = cell.column; j <= cell.column2(); j++) {
+                Component com = store.getComponentOver(i, j);
+
+                if (com != null) {
+                    Cell oldCell = com.getCell();
+                    Cell newCell = null;
+
+                    if (cell.contains(com.getCell())) {
+                        continue;
+                    }
+
+                    // 如果右下角在选择区域内, 则宽度变小
+                    if (cell.contains(cell.row, com.getCell().column2())) {
+                        newCell = (Cell) oldCell.clone();
+                        newCell.colSpan = cell.column - newCell.column;
+                    } else if (cell.contains(cell.row, com.getCell().column)) {
+                        newCell = (Cell) oldCell.clone();
+                        newCell.column = cell.column2() + 1;
+                        newCell.colSpan = -newCell.column + 1 + oldCell.column2();
+                    }
+
+                    if (newCell != null) {
+                        com.setCell(newCell);
+
+                        lst.propertyChange(new PropertyChangeEvent(com,
+                                ComponentConstants.PROPERTY_CELL, oldCell, newCell));
+                    }
+                }
+            }
+        }
+
+        for (int i = cell.row; i <= cell.row2(); i++) {
+            for (int j = cell.column; j <= cell.column2(); j++) {
+                Component com = store.getComponent(i, j);
+
+                if (com != null) {
+                    Component p = com.getParent();
+                    com.getParent().remove(com);
+
+                    PropertyChangeEvent e = new PropertyChangeEvent(p,
+                            ComponentConstants.PROPERTY_DELETE, com, null);
+
+                    lst.propertyChange(e);
+                }
+            }
+        }
+
+        lst.applyEdit(edit);
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param edit
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public boolean ununitCell(GroupEdit edit) {
+        TableBase t = getTable();
+
+        Rectangle sel = (Rectangle) tablePeer.getSelection().clone();
+
+        TablePropertyListener lst = new TablePropertyListener(tablePeer);
+        t.addPropertyChangeListener(lst);
+
+        boolean unmerged = t.unmergeCell(sel.y, sel.x, sel.width, sel.height);
+        t.removePropertyChangeListener(lst);
+
+        if (unmerged) {
+            lst.applyEdit(edit);
+        }
+
+        return unmerged;
+    }
+
+    // //
+
+    /**
+     * @param g
+     */
+    public void paint(Graphics g) {
+        if (vertResizeBar != null) {
+            vertResizeBar.paint((Graphics2D) g);
+        } else if (horzResizeBar != null) {
+            horzResizeBar.paint((Graphics2D) g);
+        }
+    }
+
+    /*
+     * 如果是多选 点选了已选件, 且为shift 键已
+     *
+     */
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param modifier
+     *            DOCUMENT ME!
+     * @param x
+     *            DOCUMENT ME!
+     * @param y
+     *            DOCUMENT ME!
+     */
+    public void mouseDoublePressed1(int modifier, int x, int y) {
+        Cell cell = hitCell(getTable(), x, y);
+
+        if ((MouseEvent.META_MASK & modifier) == 0) {
+            createLabelAt(cell, (InputEvent.CTRL_MASK & modifier) != 0);
+        }
+    }
+
+    /**
+     * @param cell
+     */
+    private void createLabelAt(Cell cell, boolean ctrl) {
+        cell = leadingCell(getTable(), cell);
+
+        Component hit = getTable().getCellstore().getComponent(cell.row, cell.column);
+
+        if (hit == null) {
+            hit = new Label();
+
+            Rectangle b = getTable().getBounds(cell.row, cell.column, cell.colSpan, cell.rowSpan);
+            hit.setBounds(b);
+            hit.setCell(cell);
+            getTable().add(hit);
+
+            ComponentPeer peer = ComponentPeerFactory.createPeer(tablePeer.getOwner(), hit);
+            tablePeer.add(peer);
+
+            tablePeer.getOwner().addEdit(new AddEdit(peer, true));
+        }
+
+        ComponentPeer peer = tablePeer.descendingPeer(hit);
+        ComponentEditor editor = ComponentEditorFactory.createEditor(peer, ctrl);
+
+        if (editor != null) {
+            editor.show(peer);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+     */
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param e
+     *            DOCUMENT ME!
+     */
+    public void actionPerformed(ActionEvent e) {
+        // if (editor.isChanged()) {
+        // // 可以自动处理undo
+        // ZLabel label = editor.getLabel();
+        // String oldText = label.getText();
+        // label.setText(editor.getText());
+        //
+        // tablePeer.getOwner().addEdit(
+        // new ZPropertyEdit(tablePeer.getChildPeer(label),
+        // ZComponentConstants.PROPERTY_TEXT, oldText, label
+        // .getText()));
+        // }
+        //
+        // tablePeer.getOwner().repaint();
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    protected TableBase getTable() {
+        return (tablePeer == null) ? null : (TableBase) tablePeer.getComponent();
+    }
+
+    /**
+     * DOCUMENT ME!
+     */
+    private void nextFocusedCell() {
+        TableBase grid = getTable();
+
+        Cell focusedCell = (Cell) tablePeer.getFocusedCell();
+
+        focusedCell = leadingCell(grid, focusedCell);
+
+        int row = focusedCell.row + focusedCell.rowSpan;
+        int col = focusedCell.column;
+
+        if (row >= grid.getRowCount()) {
+            row = 0;
+            col = col + 1;
+
+            if (col == grid.getColumnCount()) {
+                return;
+            }
+        }
+
+        setSelection(new Rectangle(col, row, 1, 1));
+    }
+
+    /**
+     * @param e
+     */
+    public boolean keyTyped(KeyEvent e) {
+        if ((e.getModifiers() & (KeyEvent.ALT_MASK | KeyEvent.SHIFT_MASK | KeyEvent.CTRL_MASK)) != 0) {
+            return false;
+        }
+
+        switch (e.getKeyChar()) {
+        case KeyEvent.VK_ENTER:
+            nextFocusedCell();
+            tablePeer.getOwner().repaint();
+
+            break;
+
+        case KeyEvent.VK_ESCAPE:
+        case KeyEvent.VK_DELETE:
+            break;
+
+        default:
+            e.consume();
+
+            Cell cell = new Cell(tablePeer.getFocusedCell().row, tablePeer.getFocusedCell().column,
+                    1, 1);
+
+            createLabelAt(cell, false);
+            sendKey(editor, e.getKeyCode(), e.getKeyChar());
+
+            break;
+        }
+
+        return true;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param comp
+     *            DOCUMENT ME!
+     * @param vk_code
+     *            DOCUMENT ME!
+     * @param keyChar
+     *            DOCUMENT ME!
+     */
+    public static void sendKey(java.awt.Component comp, int vk_code, char keyChar) {
+        KeyEvent k = new KeyEvent(comp, KeyEvent.KEY_TYPED, new Date().getTime(), 0,
+                KeyEvent.VK_UNDEFINED, keyChar);
+        comp.dispatchEvent(k);
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param t
+     *            DOCUMENT ME!
+     * @param r
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    private static Cell[] getCells(TableBase t, Rectangle r) {
+        Vector cells = new Vector();
+
+        for (int row = r.y; row < (r.y + r.height); row++) {
+            for (int col = r.x; col < (r.x + r.width); col++) {
+                Cell cell = new Cell(row, col);
+                cell = leadingCell(t, cell);
+
+                if (!cells.contains(cell)) {
+                    cells.add(cell);
+                }
+            }
+        }
+
+        return (Cell[]) cells.toArray(new Cell[0]);
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param row
+     *            DOCUMENT ME!
+     * @param h
+     *            DOCUMENT ME!
+     * @param edit
+     *            DOCUMENT ME!
+     */
+    private void insertRow(int row, int h, CompoundEdit edit, boolean topside) {
+        TableBase t = (TableBase) tablePeer.getComponent();
+
+        TablePropertyListener lst = new TablePropertyListener(tablePeer);
+        t.addPropertyChangeListener(lst);
+
+        if (topside) {
+            t.insertRowBefore(row, h);
+        } else {
+            t.insertRowAfter(row, h);
+        }
+
+        t.removePropertyChangeListener(lst);
+
+        lst.applyEdit(edit);
+    }
+
+    private void insertColumn(int col, int w, CompoundEdit edit, boolean leftside) {
+        TableBase t = (TableBase) tablePeer.getComponent();
+
+        TablePropertyListener lst = new TablePropertyListener(tablePeer);
+        t.addPropertyChangeListener(lst);
+
+        if (leftside) {
+            t.insertColumnBefore(col, w);
+        } else {
+            t.insertColumnAfter(col, w);
+        }
+
+        t.removePropertyChangeListener(lst);
+
+        lst.applyEdit(edit);
+    }
+
+    /**
+     * @param x
+     * @param edit
+     */
+    boolean removeColumn(int col, int count, GroupEdit edit) {
+        TableBase t = (TableBase) getTable();
+
+        if (t.getColumnCount() == count) {
+            MessageBox.error(tablePeer.getOwner().getTopLevelAncestor(),
+                Messages.getString("ZTableHandler.12")); //$NON-NLS-1$
+
+            return false;
+        }
+
+        TablePropertyListener lst = new TablePropertyListener(tablePeer);
+        t.addPropertyChangeListener(lst);
+
+        t.removeColumn(col, count);
+        t.removePropertyChangeListener(lst);
+
+        lst.applyEdit(edit);
+
+        return true;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param row
+     *            DOCUMENT ME!
+     * @param edit
+     *            DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public boolean removeRow(int row, int count, CompoundEdit edit) {
+        TableBase t = (TableBase) tablePeer.getComponent();
+
+        if ((row < 0) || (row >= t.getRowCount())) {
+            throw new java.lang.ArrayIndexOutOfBoundsException(Messages.getString(
+                    "ZGridController.21") //$NON-NLS-1$
+                 +row);
+        }
+
+        if (t.getRowCount() == count) {
+            MessageBox.error(tablePeer.getOwner().getTopLevelAncestor(),
+                Messages.getString("ZTableHandler.13")); //$NON-NLS-1$
+
+            return false;
+        }
+
+        TablePropertyListener lst = new TablePropertyListener(tablePeer);
+        t.addPropertyChangeListener(lst);
+
+        t.removeRow(row, count);
+
+        t.removePropertyChangeListener(lst);
+
+        lst.applyEdit(edit);
+
+        return true;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     * @uml.property name="off"
+     */
+    Point getOff() {
+        return off;
+    }
+
+    /**
+     * @param edit
+     * @return
+     */
+    boolean resizeColumnWidths(GroupEdit edit) {
+        TableBase table = getTable();
+
+        int[] oldVal = getColumnWidths(table);
+
+        Rectangle selection = tablePeer.getSelection();
+
+        // 取先中的第一列,作为初始值
+        int width = table.getColumnWidth(selection.x);
+
+        SizeDialog input = new SizeDialog((Frame) tablePeer.getOwner().getTopLevelAncestor(),
+                Messages.getString("ZGridController.e"),
+                Messages //$NON-NLS-1$
+            .getString("ZGridController.o"), width); //$NON-NLS-1$ //$NON-NLS-2$
+        input.show();
+
+        if (!input.xok) {
+            return false;
+        } else {
+            for (int i = selection.x; i < (selection.x + selection.width); i++)
+                table.setColumnWidth(i, input.getValue());
+
+            int[] newVal = getColumnWidths(table);
+
+            edit.addEdit(new TablePropertyEdit(tablePeer,
+                    ComponentConstants.PROPERTY_COLUMN_WIDTHS, oldVal, newVal));
+
+            return true;
+        }
+    }
+
+    /**
+     * @param edit
+     * @return
+     */
+    boolean resizeRowHeights(GroupEdit edit) {
+        TableBase table = getTable();
+
+        int[] oldVal = table.getRowHeights();
+
+        Rectangle selection = tablePeer.getSelection();
+
+        // 取先中的第一列,作为初始值
+        int height = table.getRowHeight(selection.y);
+
+        SizeDialog input = new SizeDialog((Frame) tablePeer.getOwner().getTopLevelAncestor(),
+                Messages.getString("ZGridController.p"),
+                Messages //$NON-NLS-1$
+            .getString("ZGridController.q"), height); //$NON-NLS-1$ //$NON-NLS-2$
+
+        input.show();
+
+        if (!input.xok) {
+            return false;
+        } else {
+            for (int i = selection.y; i < (selection.y + selection.height); i++)
+                table.setRowHeight(i, input.getValue());
+
+            int[] newVal = table.getRowHeights();
+
+            edit.addEdit(new TablePropertyEdit(tablePeer, ComponentConstants.PROPERTY_ROW_HEIGHTS,
+                    oldVal, newVal));
+
+            return true;
+        }
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param gridPeer
+     *            DOCUMENT ME!
+     * @param sel
+     *            DOCUMENT ME!
+     * @param prepareClass
+     *            DOCUMENT ME!
+     * @param edit
+     *            DOCUMENT ME!
+     */
+
+    /**
+     *
+     */
+    public void hidePopup() {
+        if (ppm.isVisible()) {
+            ppm.setVisible(false);
+        }
+    }
+
+    /**
+     * @uml.property name="tablePeer"
+     */
+    public TablePeer getTablePeer() {
+        return tablePeer;
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @param b
+     *            DOCUMENT ME!
+     */
+    public void setFocused(boolean b) {
+        if (tablePeer != null) {
+            tablePeer.setFocused(false);
+        }
+    }
+
+    class _InsertItem extends JMenuItem implements ActionListener {
+        Class prepareClass;
+
+        /**
+         * @param action
+         */
+        public _InsertItem(ReportAction action) {
+            super((String) action.getValue(Action.NAME), (Icon) action.getValue(Action.SMALL_ICON));
+            this.prepareClass = (Class) action.getValue(ToolboxTarget.USER_OBJECT);
+            this.addActionListener(this);
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+         */
+        public void actionPerformed(ActionEvent e) {
+            if (prepareClass == null) {
+                return;
+            }
+
+            GroupEdit edit = new GroupEdit();
+            edit.addEdit(new TablePropertyEdit(tablePeer));
+
+            ReportPanel owner = tablePeer.getOwner();
+
+            Rectangle r = tablePeer.getSelection();
+            insertChildren(r.y, r.x, r.width, r.height, prepareClass, edit);
+            setSelection(tablePeer.getSelection());
+            edit.addEdit(new TablePropertyEdit(tablePeer));
+            owner.addEdit(edit);
+
+            _repaint();
+        }
+    }
+
+    class _PopAction extends AbstractAction {
+        _PopAction(String name) {
+            super(name);
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            TableBase table = getTable();
+            Rectangle selection = tablePeer.getSelection();
+
+            boolean done = true;
+
+            GroupEdit edit = new GroupEdit();
+            edit.addEdit(new TablePropertyEdit(tablePeer));
+
+            if (e.getActionCommand() == INSERT_ROW_BEFORE) {
+                insertRow(selection.y, DEFAULT_ROW_HEIGHT, edit, true);
+
+                BlankCellLoader.load(tablePeer, edit);
+                setSelection(selection);
+            } else if (e.getActionCommand() == INSERT_ROW_BEFORE_N) {
+                int batch = ((Integer) ((JComponent) e.getSource()).getClientProperty(BATCH)).intValue();
+
+                for (int i = 0; i < batch; i++) {
+                    insertRow(selection.y, DEFAULT_ROW_HEIGHT, edit, true);
+
+                    BlankCellLoader.load(tablePeer, edit);
+                }
+
+                selection.height = batch;
+                setSelection(selection);
+            } else if (e.getActionCommand() == INSERT_ROW_AFTER_N) {
+                int batch = ((Integer) ((JComponent) e.getSource()).getClientProperty(BATCH)).intValue();
+
+                for (int i = 0; i < batch; i++) {
+                    insertRow(selection.y, DEFAULT_ROW_HEIGHT, edit, false);
+                    BlankCellLoader.load(tablePeer, edit);
+                }
+
+                selection.y++;
+                selection.height = batch;
+                setSelection(selection);
+            } else if (e.getActionCommand() == INSERT_ROW_AFTER) {
+                insertRow(selection.y, DEFAULT_ROW_HEIGHT, edit, false);
+                BlankCellLoader.load(tablePeer, edit);
+
+                selection.y++;
+                setSelection(selection);
+            } else if (e.getActionCommand() == INSERT_COL_BEFORE) {
+                insertColumn(selection.x, DEFAULT_COLUMN_WIDTH, edit, true);
+                BlankCellLoader.load(tablePeer, edit);
+                setSelection(selection);
+            } else if (e.getActionCommand() == INSERT_COL_BEFORE_N) {
+                int batch = ((Integer) ((JComponent) e.getSource()).getClientProperty(BATCH)).intValue();
+
+                for (int i = 0; i < batch; i++) {
+                    insertColumn(selection.x, DEFAULT_COLUMN_WIDTH, edit, true);
+                }
+
+                BlankCellLoader.load(tablePeer, edit);
+                selection.width = batch;
+
+                setSelection(selection);
+            } else if (e.getActionCommand() == INSERT_COL_AFTER) {
+                insertColumn(selection.x, DEFAULT_COLUMN_WIDTH, edit, false);
+                BlankCellLoader.load(tablePeer, edit);
+                selection.x++;
+                setSelection(selection);
+            } else if (e.getActionCommand() == INSERT_COL_AFTER_N) {
+                int batch = ((Integer) ((JComponent) e.getSource()).getClientProperty(BATCH)).intValue();
+
+                for (int i = 0; i < batch; i++) {
+                    insertColumn(selection.x, DEFAULT_COLUMN_WIDTH, edit, false);
+                }
+
+                BlankCellLoader.load(tablePeer, edit);
+                selection.x++;
+                selection.width = batch;
+                setSelection(selection);
+            } else if (e.getActionCommand() == REMOVE_ROW) {
+                done = removeRow(selection.y, selection.height, edit);
+
+                if (done) {
+                    selection.height = 1;
+
+                    // 如果删除到最后,则selection.x 应往左移动一格;
+                    if (selection.y == table.getRowCount()) {
+                        selection.y--;
+                    }
+
+                    BlankCellLoader.load(tablePeer, edit);
+
+                    setSelection(selection);
+                }
+            } else if (e.getActionCommand() == SHOW_GRID) {
+                JCheckBoxMenuItem gv = (JCheckBoxMenuItem) e.getSource();
+                tablePeer.setGridVisible(gv.isSelected());
+
+                tablePeer.getOwner().repaint();
+                done = false;
+            } else if (e.getActionCommand() == REMOVE_COL) {
+                done = removeColumn(selection.x, selection.width, edit);
+
+                if (done) {
+                    selection.width = 1;
+
+                    // 如果删除到最后,则selection.x 应往左移动一格;
+                    if (selection.x == table.getColumnCount()) {
+                        selection.x--;
+                    }
+
+                    BlankCellLoader.load(tablePeer, edit);
+                    setSelection(selection);
+                }
+            } else if (e.getActionCommand() == UNITE_CELL) {
+                done = unitCell(edit);
+            } else if (e.getActionCommand() == UN_UNITE_CELL) {
+                done = ununitCell(edit);
+                BlankCellLoader.load(tablePeer, edit);
+                setSelection(selection);
+            } else if (e.getActionCommand() == RESIZE_ROW_HEIGHTS) {
+                done = resizeRowHeights(edit);
+            } else if (e.getActionCommand() == RESIZE_COL_WIDTHS) {
+                done = resizeColumnWidths(edit);
+            }
+
+            if (done) {
+                edit.addEdit(new TablePropertyEdit(tablePeer));
+                tablePeer.getOwner().addEdit(edit);
+                _repaint();
+            }
+        }
+
+        /**
+         * @param y
+         */
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @version 1.00
+     * @author W.John
+     */
+    class _State {
+        public int mainState; // STATE_IDLE/STATE_SELECTING/STATE_RESIZING
+        public int subState;
+        public Rectangle lastResizeLine = new Rectangle();
+        public int startRow;
+        public int startCol;
+        public Point minPoint = new Point();
+        public Point lastSelCell = new Point();
+        public Point lastMousePosition = new Point();
+    }
+
+    class _RowSizer {
+        int index;
+        int top;
+
+        _RowSizer(int index, int top) {
+            this.index = index;
+            this.top = top;
+        }
+    }
+
+    class _ColumnSizer {
+        int index;
+        int left;
+
+        _ColumnSizer(int index, int left) {
+            this.index = index;
+            this.left = left;
+        }
+    }
+
+    class _Line {
+        int orientation;
+        Point pos = new Point(-1, -1);
+
+        _Line(int orientation, int pos) {
+            if (orientation == VERTICAL) {
+                this.pos.x = pos;
+            } else {
+                this.pos.y = pos;
+            }
+
+            this.orientation = orientation;
+        }
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @param x
+         * @param y
+         */
+        public void moveTo(int x, int y) {
+            if (orientation == VERTICAL) {
+                pos.x = x;
+            } else {
+                pos.y = y;
+            }
+        }
+
+        /**
+         * DOCUMENT ME!
+         *
+         * @param g2
+         */
+        public void paint(Graphics2D g2) {
+            int x0 = 0;
+            int x1 = 0;
+            int y0 = 0;
+            int y1 = 0;
+
+            if (orientation == VERTICAL) {
+                x0 = pos.x;
+                x1 = x0;
+                y0 = -off.y;
+                y1 = tablePeer.getOwner().getHeight();
+            } else {
+                y0 = pos.y;
+                y1 = y0;
+                x0 = -off.x;
+                x1 = tablePeer.getOwner().getWidth();
+            }
+
+            g2.setXORMode(Color.white);
+            g2.setStroke(RESIZE_STROKE);
+            g2.setColor(Color.DARK_GRAY);
+
+            Line2D line = new Line2D.Float(x0, y0, x1, y1);
+            g2.draw(line);
+            g2.setPaintMode();
+        }
+    }
+}
+
+
+/**
+ * @author java9
+ */
+class SizeDialog extends JDialog {
+    SpinEditor editor;
+    boolean xok;
+
+    SizeDialog(Frame owner, String caption, String label, int value) {
+        super(owner, caption, true);
+
+        JPanel center = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        center.add(new JLabel(label), gbc);
+        editor = new SpinEditor(new Integer(value), new Integer(0), new Integer(500), new Integer(1));
+        editor.setPreferredSize(new Dimension(90, 20));
+        center.add(editor, gbc);
+
+        JPanel commandPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton doneCommand = new JButton(Messages.getString("ZGridController.r")); //$NON-NLS-1$
+        JButton cancelCommand = new JButton(Messages.getString("ZGridController.s")); //$NON-NLS-1$
+        doneCommand.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    xok = true;
+                    hide();
+                }
+            });
+        cancelCommand.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    hide();
+                }
+            });
+
+        commandPanel.add(doneCommand);
+        commandPanel.add(cancelCommand);
+
+        getContentPane().add(center, BorderLayout.CENTER);
+        getContentPane().add(commandPanel, BorderLayout.SOUTH);
+
+        this.setSize(new Dimension(300, 130));
+
+        this.setLocationRelativeTo(owner);
+    }
+
+    /**
+     * DOCUMENT ME!
+     *
+     * @return DOCUMENT ME!
+     */
+    public int getValue() {
+        return editor.intValue();
+    }
+}
