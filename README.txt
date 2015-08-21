@@ -22,7 +22,7 @@ http://www.oschina.net/p/jor
 √ 支持所有主流数据库，如 Oracle、DB2、Sql Server 、Mysql等
 √ 支持任何的j2ee应用服务器，如Tomcat、Apusic、 WebSphere、WebLogic等
 √ 支持Windows、Linux、Unix、Mac os等操作系统
-√ JDK1.4 以上版本适用
+√ JDK1.7 以上版本适用
 
 项目官网：
 http://www.jatools.com/jor/
@@ -32,6 +32,7 @@ http://www.jatools.com/jor/
 
 这个是从官网拷贝的代码，不修改包结构，不修改log。
 将代码拆分成两个部分，一个是jor-report-gui，一个是jor-report-web。
+代码已经修改成支持jdk1.7版本。
 
 主要把代码梳理下能跑通，切换成maven工程。
 
