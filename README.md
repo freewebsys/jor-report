@@ -43,6 +43,6 @@
 项目license参考网站：
     http://www.jatools.com/jor/license.htm
 
-项目严格遵循其开源协议。
+项目严格遵循其开源协议。非其官方（杭州杰创软件有限公司）发布。
 
 jor-report-gui 工程main函数在 jatools.designer.App，即可运行设计器。
