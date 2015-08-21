@@ -191,6 +191,7 @@
 
 
     <build>
+        <finalName>jor-report-gui</finalName>
         <!-- 设置路径，读取路径问题. -->
         <sourceDirectory>src/main/java</sourceDirectory>
         <resources>
