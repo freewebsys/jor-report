@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jatools Class="com.jatools.designer.config.UserX" Name="jatools report template">
+    <DefaultJdbcDriver>lcga</DefaultJdbcDriver>
+    <DefaultLookAndFeel>com.sun.java.swing.plaf.windows.WindowsLookAndFeel</DefaultLookAndFeel>
+    <LookAndFeels ItemClass="com.jatools.designer.ZLookAndFeel">
+        <Item0>
+            <Description>Motif</Description>
+            <L2fClassName>com.sun.java.swing.plaf.motif.MotifLookAndFeel</L2fClassName>
+        </Item0>
+        <Item1>
+            <Description>Metal</Description>
+            <L2fClassName>javax.swing.plaf.metal.MetalLookAndFeel</L2fClassName>
+        </Item1>
+        <Item2>
+            <Description>Windows</Description>
+            <L2fClassName>com.sun.java.swing.plaf.windows.WindowsLookAndFeel</L2fClassName>
+        </Item2>
+        <Item3>
+            <Description>Compiere</Description>
+            <L2fClassName>org.compiere.plaf.CompiereLookAndFeel</L2fClassName>
+        </Item3>
+    </LookAndFeels>
+    <PredefinedJdbcDrivers ItemClass="com.jatools.designer.ZJdbcDriver">
+        <!-- for demo -->
+        <Item6>
+            <Name>Demo</Name>
+            <Driver>org.hsqldb.jdbcDriver</Driver>
+            <User>sa</User>
+            <Url>jdbc:hsqldb:./demosdb/mydb</Url>
+        </Item6>
+
+        <Item0>
+            <Name>MySQL</Name>
+            <Driver>com.mysql.jdbc.Driver</Driver>
+            <PasswordX>sample</PasswordX>
+            <Url>jdbc:mysql://localhost/sample</Url>
+        </Item0>
+        <Item1>
+            <Name>IBM DB2</Name>
+            <Driver>COM.ibm.db2.jdbc.app.DB2Driver</Driver>
+            <PasswordX>sample</PasswordX>
+            <Url>jdbc:db2://localhost:5000/sample</Url>
+        </Item1>
+        <Item2>
+            <Name>Oracle</Name>
+            <Driver>oracle.jdbc.driver.OracleDriver</Driver>
+            <PasswordX>sample</PasswordX>
+            <Url>jdbc:oracle:thin:@localhost:1521:sample</Url>
+        </Item2>
+        <Item4>
+            <Name>MSSQL 2000</Name>
+            <Driver>com.microsoft.jdbc.sqlserver.SQLServerDriver</Driver>
+            <PasswordX>sample</PasswordX>
+            <Url>jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=sample</Url>
+        </Item4>
+
+    </PredefinedJdbcDrivers>
+    <UserDefinedComponents ItemClass="com.jatools.designer.ZUserDefinedComponent">
+        <Item0>
+            <Description>MyCheckBox</Description>
+            <Icon>/com/jatools/icons/checkbox.gif</Icon>
+            <IntanceClassName>userx.MyCheckBox</IntanceClassName>
+        </Item0>
+    </UserDefinedComponents>
+</jatools>

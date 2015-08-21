@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jatools Class="[Ljatools.designer.JdbcProvider;" ItemClass="jatools.designer.JdbcProvider" Len="12"
+         Name="jatools report template">
+    <!--for demo -->
+    <Item0>
+        <Name>demo</Name>
+        <Driver>org.hsqldb.jdbcDriver</Driver>
+        <User>sa</User>
+        <PasswordX>sa</PasswordX>
+        <Url>jdbc:hsqldb:./demosdb/mydb</Url>
+    </Item0>
+    <!-- for sample -->
+    <Item1>
+        <Name>IBM DB2</Name>
+        <Driver>COM.ibm.db2.jdbc.app.DB2Driver</Driver>
+        <PasswordX>sample</PasswordX>
+        <Url>jdbc:db2://localhost:5000/sample</Url>
+    </Item1>
+    <Item2>
+        <Name>Oracle</Name>
+        <Driver>oracle.jdbc.driver.OracleDriver</Driver>
+        <PasswordX>sample</PasswordX>
+        <Url>jdbc:oracle:thin:@localhost:1521:sample</Url>
+    </Item2>
+    <Item4>
+        <Name>MS SQL</Name>
+        <Driver>com.microsoft.jdbc.sqlserver.SQLServerDriver</Driver>
+        <PasswordX>sample</PasswordX>
+        <Url>jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=sample</Url>
+    </Item4>
+
+
+</jatools>
