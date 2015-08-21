@@ -190,7 +190,8 @@ public class DatasetExplorer extends JPanel implements ChangeListener, NameCheck
         property.show();
 
         if (property.isExitOK()) {
-            DatasetReaderFactory proxyFactory = SimpleDatasetReaderFactory.getIntance(property.getType());
+            //调取字符串类。
+            DatasetReaderFactory proxyFactory = SimpleDatasetReaderFactory.getIntance(property.getTypeStr());
 
             if (proxyFactory != null) {
                 DatasetReader proxy = proxyFactory.create(this, this);

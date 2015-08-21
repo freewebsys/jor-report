@@ -6,16 +6,16 @@ import java.sql.SQLException;
 
 
 /**
+ * DOCUMENT ME!
  *
- *
- * @author
- * @version
+ * @author $author$
+ * @version $Revision$
   */
 public class TestOracle {
     /**
+     * DOCUMENT ME!
      *
-     *
-     * @param args
+     * @param args DOCUMENT ME!
      */
     public static void main(String[] args) {
         try {
@@ -25,7 +25,7 @@ public class TestOracle {
                     "HZWGC", "HZWGC");
             CallableStatement stmt = conn.prepareCall("{call HZWGC.SP_COLLECTION_PRINT(27,?)}");
 
-            //stmt.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+            stmt.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
             stmt.execute();
 
             ResultSet xx = (ResultSet) ((CallableStatement) stmt).getObject(1);

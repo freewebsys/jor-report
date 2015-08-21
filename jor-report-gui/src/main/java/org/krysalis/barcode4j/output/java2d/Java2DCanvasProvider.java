@@ -136,8 +136,10 @@ public class Java2DCanvasProvider extends AbstractCanvasProvider {
         deviceCenteredText(text, x1, x2, y1, fontName, fontSize, false);
     }
 
-    public void deviceText(String s, double v, double v1, double v2, String s1, double v3,
-                           TextAlignment textAlignment) {
+    //@add-new-code
+    public void deviceText(String text, double x1, double x2, double y1,
+                           String fontName, double fontSize, TextAlignment textAlign) {
+        deviceCenteredText(text, x1, x2, y1, fontName, fontSize, false);
     }
 
     /**

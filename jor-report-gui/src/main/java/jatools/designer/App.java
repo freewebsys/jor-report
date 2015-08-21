@@ -1,7 +1,6 @@
 package jatools.designer;
 
 
-
 import jatools.ReportDocument;
 import jatools.accessor.ProtectPublic;
 import jatools.component.Component;
@@ -35,7 +34,7 @@ import org.apache.log4j.Logger;
  *
  * @author $author$
  * @version $Revision$
-  */
+ */
 public class App implements ProtectPublic {
     private static Logger logger = Logger.getLogger("A");
     public static MruManager mruManager = new MruManager(5, new OpenMruAction());
@@ -48,25 +47,25 @@ public class App implements ProtectPublic {
 
         if ("1.4.1".compareTo(jre) > 0) {
             JOptionPane.showMessageDialog(null,
-                App.messages.getString("res.69") + jre + App.messages.getString("res.70"), App.messages.getString("res.71"),
-                JOptionPane.ERROR_MESSAGE);
+                    App.messages.getString("res.69") + jre + App.messages.getString("res.70"), App.messages.getString("res.71"),
+                    JOptionPane.ERROR_MESSAGE);
 
             throw new RuntimeException("invalid jre version");
         }
 
         Component.defaultDataProvider = new SimpleScript() {
-                    public Object get(String dataName) {
-                        return Main.getInstance().getActiveEditor().getDocument()
-                                   .getVariable(dataName);
-                    }
+            public Object get(String dataName) {
+                return Main.getInstance().getActiveEditor().getDocument()
+                        .getVariable(dataName);
+            }
 
-                    public void set(String data, Object value) {
-                    }
+            public void set(String data, Object value) {
+            }
 
-                    public Object eval(String beforePrint) {
-                        return null;
-                    }
-                };
+            public Object eval(String beforePrint) {
+                return null;
+            }
+        };
     }
 
     /**
@@ -100,7 +99,6 @@ public class App implements ProtectPublic {
      * DOCUMENT ME!
      *
      * @param msg DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public static String localize(String msg) {
@@ -152,11 +150,15 @@ public class App implements ProtectPublic {
                 }
             }
         }
+        //@add-new-code
+        System.out.println(working_dir);
 
-        System2.setUserPath(working_dir);
+        //System2.setUserPath(working_dir);
+        System2.setUserPath(working_dir + "/jor-report-gui/src/main/resources/");
+        System2.setUserPath(working_dir + "/target/");
 
         if (!nolookandfeel) {
-           // setLookAndFeel();
+            // setLookAndFeel();
         }
 
         loadMru();
@@ -192,21 +194,20 @@ public class App implements ProtectPublic {
     /**
      * DOCUMENT ME!
      *
-     * @param doc DOCUMENT ME!
+     * @param doc           DOCUMENT ME!
      * @param queryAsClosed DOCUMENT ME!
-     *
      * @return DOCUMENT ME!
      */
     public static Frame newFrame(ReportDocument doc, boolean queryAsClosed) {
         Main mainFrame = new Main();
-  
+
 
         mainFrame.pack();
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         if (doc != null) {
             mainFrame.createEditor(doc, ReportDocument.getCachedFile(doc).getName(),
-                ReportDocument.getCachedFile(doc).getAbsolutePath(),true);
+                    ReportDocument.getCachedFile(doc).getAbsolutePath(), true);
         }
 
         return mainFrame;

@@ -119,6 +119,7 @@ public class JFileTree extends JTree {
         }
 
         public String toString() {
+            System.out.println(file.getPath());
             if (file.getParentFile() == null) {
                 return DISK_EN + "(" + file.getPath().substring(0, 2) + ")";
             } else {

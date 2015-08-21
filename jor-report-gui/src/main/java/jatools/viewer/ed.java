@@ -109,12 +109,9 @@ public class ed extends JDialog implements ActionListener {
      *
      * @return DOCUMENT ME!
      */
-    public String getType() {
+    public String getTypeStr() {
         return type;
     }
-
-
-
 
     /**
      * DOCUMENT ME!

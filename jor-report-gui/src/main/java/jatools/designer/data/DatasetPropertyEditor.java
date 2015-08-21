@@ -165,7 +165,7 @@ public class DatasetPropertyEditor extends JDialog {
      *
      * @return DOCUMENT ME!
      */
-    public String getType() {
+    public String getTypeStr() {
         return (String) typeSelector.getSelectedItem();
     }
 }

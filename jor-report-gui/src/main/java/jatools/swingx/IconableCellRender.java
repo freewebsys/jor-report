@@ -12,11 +12,10 @@ import javax.swing.UIManager;
 /**
  * DOCUMENT ME!
  *
- * @version $Revision: 1.2 $
  * @author $author$
+ * @version $Revision: 1.2 $
  */
-class IconableCellRender extends DefaultListCellRenderer
-    implements ListCellRenderer {
+public class IconableCellRender<Icon> extends DefaultListCellRenderer  {
     /**
      * Creates a new CellRenderer object.
      */
@@ -26,22 +25,27 @@ class IconableCellRender extends DefaultListCellRenderer
     /**
      * Creates a new ZIconableCellRender object.
      *
-     * @param checkedIcon DOCUMENT ME!
+     * @param checkedIcon   DOCUMENT ME!
      * @param nocheckedIcon DOCUMENT ME!
      */
-    public IconableCellRender(Icon checkedIcon, Icon nocheckedIcon) {
-        this.checkedIcon = checkedIcon;
-        this.nocheckedIcon = nocheckedIcon;
-
-        setBackground(UIManager.getColor("List.textBackground")); //
-        setForeground(UIManager.getColor("List.textForeground")); //
-    }
+//    public IconableCellRender(Icon checkedIcon, Icon nocheckedIcon) {
+//        this.checkedIcon = checkedIcon;
+//        this.nocheckedIcon = nocheckedIcon;
+//
+//        setBackground(UIManager.getColor("List.textBackground")); //
+//        setForeground(UIManager.getColor("List.textForeground")); //
+//    }
 
     /**
      * Creates a new ZIconableCellRender object.
      */
     public IconableCellRender() {
-        this(UIManager.getIcon("Tree.leafIcon"), UIManager.getIcon("Tree.closedIcon")); // //$NON-NLS-2$
+
+        this.checkedIcon = (Icon)UIManager.getIcon("Tree.leafIcon");
+        this.nocheckedIcon = (Icon)UIManager.getIcon("Tree.closedIcon");
+
+        setBackground(UIManager.getColor("List.textBackground")); //
+        setForeground(UIManager.getColor("List.textForeground")); //
     }
 
     /**
@@ -65,22 +69,22 @@ class IconableCellRender extends DefaultListCellRenderer
     /**
      * DOCUMENT ME!
      *
-     * @param list DOCUMENT ME!
-     * @param value DOCUMENT ME!
-     * @param index DOCUMENT ME!
+     * @param list       DOCUMENT ME!
+     * @param value      DOCUMENT ME!
+     * @param index      DOCUMENT ME!
      * @param isSelected DOCUMENT ME!
-     * @param hasFocus DOCUMENT ME!
-     *
+     * @param hasFocus   DOCUMENT ME!
      * @return DOCUMENT ME!
      */
+
     public Component getListCellRendererComponent(JList list, Object value, int index,
                                                   boolean isSelected, boolean hasFocus) {
         super.getListCellRendererComponent(list, value, index, isSelected, hasFocus);
 
         Icon icon = ((CheckBoxDndList) list).isSelected(index)
-                    ? checkedIcon : nocheckedIcon;
+                ? checkedIcon : nocheckedIcon;
 
-        setIcon(icon);
+        //setIcon(icon);
 
         return this;
     }

@@ -134,7 +134,7 @@ public class Viewer extends JApplet {
             e.show();
 
             if (e.xok) {
-                String type = e.getType();
+                String typeStr = e.getTypeStr();
                 URL url = this.getCodeBase();
 
                 String port = (url.getPort() == -1) ? "" : (":" +
@@ -145,7 +145,7 @@ public class Viewer extends JApplet {
                 codebase = codebase.substring(0, codebase.lastIndexOf("/"));
 
                 String _url = codebase + "/server?call_cache=" + call_cache +
-                    "&as=" + type+"&do_export=1";
+                    "&as=" + typeStr+"&do_export=1";
                 getAppletContext().showDocument(new URL(_url));
             }
         } catch (MalformedURLException e) {
