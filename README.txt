@@ -1,4 +1,4 @@
-###1，项目介绍参考：
+#1，项目介绍参考：
 http://www.oschina.net/p/jor
 
 简表(JOR)，是一款开源的报表工具，完全java实现，核心代码来自于国内一线报表工具品牌杰表.2008 。
@@ -28,7 +28,7 @@ http://www.oschina.net/p/jor
 http://www.jatools.com/jor/
 
 
-###2，关于工程
+#2，关于工程
 
 这个是从官网拷贝的代码，不修改包结构，不修改log。
 将代码拆分成两个部分，一个是jor-report-gui，一个是jor-report-web。
