@@ -43,6 +43,14 @@
             <artifactId>barcode4j</artifactId>
             <version>2.1</version>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>barcode4j</groupId>-->
+            <!--<artifactId>barcode4j</artifactId>-->
+            <!--<version>barcode4j</version>-->
+            <!--<scope>system</scope>-->
+            <!--<systemPath>${project.basedir}/lib/barcode4j.jar</systemPath>-->
+        <!--</dependency>-->
+
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
@@ -71,7 +79,9 @@
         <dependency>
             <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>1.8.0.10</version>
+            <version>hsqldb</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/hsqldb.jar</systemPath>
         </dependency>
         <!--########新版本不支持########<dependency>-->
             <!--<groupId>com.itextpdf</groupId>-->
@@ -180,12 +190,6 @@
             <artifactId>xercesImpl</artifactId>
             <version>2.6.2</version>
         </dependency>
-        <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.3.3</version>
-        </dependency>
-
 
     </dependencies>
 
